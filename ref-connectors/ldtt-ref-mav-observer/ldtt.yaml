@@ -21,7 +21,7 @@ build:
   # in-toto Statement, SLSA provenance v1 (local builder); DSSE signature bundle: dist/provenance.intoto.sigstore.json
   provenance: "dist/provenance.intoto.jsonl"
   # Public commit on https://github.com/rockmed888-ship-it/ldtt containing the exact wheel inputs
-  source_commit: "0000000000000000000000000000000000000000"
+  source_commit: "fe1e34ec2e454bde55d130c606a601b065d3ce84"
 
 transport:
   kind: "mavlink2"
