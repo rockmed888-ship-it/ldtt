@@ -8,3 +8,4 @@ placeholders/keys/*.key
 *.egg-info/
 .ldtt-smoke/
 sitl-bin/
+.github/workflows/
