@@ -1,13 +1,19 @@
 # STATUS — ldtt-ref-mav-observer (Phase 2)
 
 **Brand:** Linked Drone Tool Trust · **Lead:** creator · Corrector reviews via creator
-**Tag:** Phase 2 · **Drafts only — not final**
+**Tag:** Phase 2 · **FROZEN** (Corrector freeze PASS)
 
-Updated: 2026-10-06 ~04:40 America/Chicago (CT)
+Updated: 2026-10-06 ~04:35 America/Chicago (CT)
 
-**Corrector N3 + E3 review: PASS** (draft, via creator; `reviews/LDTT-v0.1.4-and-Phase2-arch-corrector-notes.md`). Not Phase 2 freeze, not final.
+**Phase 2 freeze: PASS** (Corrector, via creator). Freeze scope unchanged. Connector artifacts remain drafts under that freeze.
 
-## Corrector A1 — FIXED (draft); A1-r — FIXED (draft, this turn)
+**Corrector N3 + E3 review: PASS** (draft, via creator; `reviews/LDTT-v0.1.4-and-Phase2-arch-corrector-notes.md`). Preceded freeze.
+
+### Stamp 0.1.0 = draft / placeholder only (not a real trust-root stamp)
+
+`stamps/org.ldtt.ref-mav-observer/0.1.0` (and connector `placeholders/` copies) is a **draft/placeholder stamp** signed with the **placeholder local key**. It is **NOT** a real trust-root stamp: no LDTT issuer key, no keyless issuer identity, no production trust root (see P6 PLAN REF). Do not treat verify-success against the placeholder pubkey as a real stamp.
+
+## Corrector A1 — FIXED (draft); A1-r — FIXED (draft)
 
 | Item | Before | After |
 |---|---|---|
@@ -17,7 +23,7 @@ Updated: 2026-10-06 ~04:40 America/Chicago (CT)
 | Verify path | Shell `cosign` primary; fail-open if missing | **In-process:** `cryptography` for local-key cosign bundles; `sigstore-python` for Fulcio Bundle JSON; cosign CLI optional fallback only |
 | **A1-r** disk cache | `save_cache` re-`json.dumps`; `load_cache` set `has_verified_list` with **no** re-verify / no rollback | **`save_cache`:** original body bytes + sibling `.sigstore.json`. **`load_cache`:** re-run `verify_fn` (ignore on fail); apply `list_version` rollback. Tampered cache → `unreachable_no_cache` / fail closed. `__main__` sets `verify_fn` before `load_cache`. |
 
-## N1 / N2 / N3
+## N1 / N2 / N3 (in freeze)
 
 | Item | Status |
 |---|---|
@@ -32,10 +38,10 @@ Updated: 2026-10-06 ~04:40 America/Chicago (CT)
 | Path | Live? |
 |---|---|
 | `LDTT-Stamp-Spec-v0.1.4.md`, `schema/ldtt.schema.json`, `schema/test_schema.py` | Yes (byte-identical to local) |
-| `revocations/revocations.json` + `.sigstore.json` | Yes — re-signed (placeholder key): `list_version` **2** (was 1), `issued_at` **2026-10-06T09:30:33Z**, empty list. Verifies in-process (`verified_local_key`). Stale after 2026-10-07 ~04:30 CT. |
-| `stamps/org.ldtt.ref-mav-observer/0.1.0.json` + `.sigstore.json` | Yes — re-issued (draft, creator decision): real wheel digest `sha256:1c8c29dbc9d0638d2a8ad4e5b703c0f408e07fd06c938606be6b660ac14de6b5`, `known_limitations` C3 + C9 (same as `ldtt.yaml`), `issued_at` 2026-10-06T09:30:33Z, placeholder-key signature verifies in-process. Draft, not a real stamp. |
-| `ref-connectors/ldtt-ref-mav-observer/` | Synced this turn (N3 + E3), see final commit in report |
-| `.github/workflows/` | **Not pushed** — gh token scopes `repo, gist, read:org` lack `workflow`. Copy at `ci/ldtt-ref-mav-observer-ci.yml`. |
+| `revocations/revocations.json` + `.sigstore.json` | Yes — placeholder-key signed: `list_version` **2**, `issued_at` **2026-10-06T09:30:33Z**, empty list, `ldtt_spec` still **0.1.3**. Verifies in-process (`verified_local_key`). Stale after 2026-10-07 ~04:30 CT. |
+| `stamps/org.ldtt.ref-mav-observer/0.1.0.json` + `.sigstore.json` | Yes — **draft/placeholder stamp only** (not a real trust-root stamp): real wheel digest `sha256:1c8c29dbc9d0638d2a8ad4e5b703c0f408e07fd06c938606be6b660ac14de6b5`, `known_limitations` C3 + C9, `issued_at` 2026-10-06T09:30:33Z, `ldtt_spec` still **0.1.3**, placeholder-key signature. |
+| `ref-connectors/ldtt-ref-mav-observer/` | Synced through freeze-prep; this commit is STATUS freeze flip (N5) |
+| `.github/workflows/` | **Not pushed** — gh token scopes `repo, gist, read:org` lack `workflow`. Copy at `ci/ldtt-ref-mav-observer-ci.yml`. **P5 stays PLAN REF.** |
 
 **Canonical repo (P7, locked):** https://github.com/rockmed888-ship-it/ldtt only — `connector.source_url`, `list_url` HTTPS copy, provenance `source`/`buildType`, SBOM, docs. No other repo is referenced in config, provenance or docs.
 
@@ -56,19 +62,22 @@ Re-run 2026-10-06 ~04:13 CT **without** dev-only flags (N3): real ArduCopter SIT
 
 **57 passed** (pytest, 2026-10-06 CT; 1 skip only where cosign CLI absent). `ldtt.yaml` VALID vs schema v0.1.4.
 
-## Remaining before Phase 2 freeze review (PLAN REF — not blocking draft)
+## Post-freeze PLAN REF (not done — do not claim complete)
 
 | Ref | Item | Status |
 |---|---|---|
-| P5 | CI keyless sign + GitHub SLSA attestation + digest-match rebuild | Blocked on gh `workflow` scope. Workflow stays at `ci/ldtt-ref-mav-observer-ci.yml` (not pushed to `.github/workflows/`). |
-| P6 | Trust root: placeholder key → LDTT issuer key (creator, §9.1) or keyless issuer identity; update connector verify config | Later, before any real stamp. Placeholder local-key kept; honest C3 known_limitation. |
-| P7 | Canonical repo locked: rockmed888-ship-it/ldtt | Done (draft). |
-| Ops | Re-sign `revocations/revocations.json` (bump `list_version`, never decrease) | Next due before **2026-10-07 ~04:30 CT** (issued 2026-10-06T09:30:33Z + 86400 s). |
-| — | Phase 2 freeze decision | Creator (via Open Builder). Not called here. |
+| **P5** | CI keyless sign + GitHub SLSA attestation + digest-match rebuild | **PLAN REF** — blocked on gh `workflow` scope. Workflow stays at `ci/ldtt-ref-mav-observer-ci.yml` (not under `.github/workflows/`). |
+| **P6** | Trust root: placeholder key → LDTT issuer key (creator, §9.1) or keyless issuer identity; update connector verify config | **PLAN REF** — required before any **real** stamp. Placeholder local-key kept; honest C3 known_limitation. |
+| P7 | Canonical repo locked: rockmed888-ship-it/ldtt | Done (under freeze). |
+| **N4** (upcoming) | Next revoke re-sign (before **~2026-10-07 04:30 CT**, `list_version` **3+**): align `ldtt_spec` to **0.1.4** on stamp `0.1.0.json` **and** `revocations.json` (then re-sign both). Documented here only — blobs left alone this commit. | Upcoming ops; not done now. |
+| Ops | Re-sign `revocations/revocations.json` (bump `list_version`, never decrease) | Next due before **2026-10-07 ~04:30 CT** (issued 2026-10-06T09:30:33Z + 86400 s). Combine with N4. |
 
 ## Confirmations
 
+- Phase 2 freeze: **PASS** (Corrector) · status **frozen**
+- Connector/stamp **0.1.0**: **draft/placeholder stamp only** — **NOT** a real trust-root stamp
+- P5 / P6: **PLAN REF** (not done)
+- N4: upcoming on next re-sign (blobs untouched this commit)
 - Spend: **$0**
 - Hardware: **none**
 - Brand: **Linked Drone Tool Trust**
-- Drafts only — **not final** / **not Phase 2 PASS**
