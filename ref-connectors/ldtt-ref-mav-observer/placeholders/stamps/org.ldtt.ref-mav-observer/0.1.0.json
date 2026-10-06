@@ -1,0 +1,16 @@
+{
+  "ldtt_spec": "0.1.3",
+  "connector_id": "org.ldtt.ref-mav-observer",
+  "version": "0.1.0",
+  "digest": "sha256:0000000000000000000000000000000000000000000000000000000000000000",
+  "level": "observe",
+  "scopes": [
+    "observe:telemetry"
+  ],
+  "transport": "mavlink2",
+  "egress": false,
+  "known_limitations": [],
+  "issuer": "LDTT",
+  "issued_at": "2026-10-06T08:42:19Z",
+  "signature": "org.ldtt.ref-mav-observer/0.1.0.json.sigstore.json"
+}

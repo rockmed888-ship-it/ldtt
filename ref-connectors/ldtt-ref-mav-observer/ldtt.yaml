@@ -1,0 +1,86 @@
+# LDTT Phase 2 draft — ldtt-ref-mav-observer (Observe reference connector)
+# Brand: Linked Drone Tool Trust. Not final — Corrector reviews via creator.
+# Creator locks: no REQUEST_DATA_STREAM; no LOG_REQUEST_*. Corrector A1: signed lists only.
+ldtt_spec: "0.1.4"
+connector:
+  id: "org.ldtt.ref-mav-observer"
+  name: "LDTT Reference MAVLink Observer"
+  version: "0.1.0"
+  publisher: "LDTT"
+  security_contact: "security@ldtt.example"
+  source_url: "https://github.com/dustindent9-cmyk/ldtt"
+  license: "Apache-2.0"
+  sbom: "sbom.spdx.json"
+
+build:
+  # E3 / C3 (Phase 2 draft): reproducible wheel ldtt_ref_mav_observer-0.1.0-py3-none-any.whl
+  # (scripts/build_release.sh; SOURCE_DATE_EPOCH pinned; CI rebuild must match this digest).
+  artifact_digest: "sha256:5873d62d5999bbeb448be7f438d16f9e605e9f032b5c4bc3206ad4895d7974c7"
+  # cosign sign-blob bundle for the wheel (local placeholder key; CI adds keyless + GitHub SLSA attestation)
+  signature: "dist/ldtt-ref-mav-observer.sigstore.json"
+  # DSSE-signed in-toto Statement, SLSA provenance v1 predicate (local builder; see evidence/e3-release-provenance.md)
+  provenance: "dist/provenance.intoto.jsonl"
+  # Public commit on https://github.com/dustindent9-cmyk/ldtt containing the exact wheel inputs
+  source_commit: "0000000000000000000000000000000000000000"
+
+transport:
+  kind: "mavlink2"
+  mavlink:
+    signing: false
+    rx_allowlist:
+      - HEARTBEAT
+      - SYS_STATUS
+      - GLOBAL_POSITION_INT
+      - ATTITUDE
+      - BATTERY_STATUS
+    # Observe read-only TX — Phase 2 locks: NO REQUEST_DATA_STREAM, NO LOG_REQUEST_*
+    # Stream setup: COMMAND_LONG with REQUEST_MESSAGE + SET_MESSAGE_INTERVAL only (F8 / PX4-friendly)
+    tx_allowlist:
+      - HEARTBEAT
+      - PARAM_REQUEST_LIST
+      - COMMAND_LONG
+    command_allowlist:
+      - MAV_CMD_REQUEST_MESSAGE
+      - MAV_CMD_SET_MESSAGE_INTERVAL
+    # no param_allowlist at Observe
+
+auth:
+  method: "local-only"
+  token_storage: "none"
+  session_ttl_s: 3600
+
+level: "observe"
+scopes:
+  - "observe:telemetry"
+  # observe:logs intentionally omitted (least privilege → no LOG_REQUEST_*)
+
+rate_limits:
+  reads_per_s: 20
+  # Creator lock #2: GCS HEARTBEAT TX (keepalive) is exempt from reads_per_s
+  # N1: --heartbeat-hz capped at 2 at runtime
+  # writes_per_min / commands_per_min omitted at Observe
+
+privacy:
+  collects: ["vehicle_location", "telemetry"]
+  personal_data: []
+  egress: []
+  retention_days: 0
+
+audit_log:
+  format: "jsonl"
+  path: "~/.ldtt/audit/org.ldtt.ref-mav-observer.jsonl"
+  # Creator lock #3: includes = MINIMUM set; refuse/deny events are always also written (evidence-positive)
+  includes: ["session", "scope_grant", "egress_opt_in", "revocation_check"]
+
+revocation:
+  # Spec v0.1.4: relative path OK (offline / DoD). Public HTTPS when live on dustindent9-cmyk/ldtt:
+  # https://raw.githubusercontent.com/dustindent9-cmyk/ldtt/main/revocations/revocations.json
+  list_url: "placeholders/revocations/revocations.json"
+  check_interval_s: 3600
+  max_staleness_s: 86400
+
+known_limitations:
+  - control: "C3"
+    note: "Draft: wheel digest is real and reproducible, but signature + provenance are local placeholder-key (not issuer key / not keyless). CI keyless sign + GitHub SLSA attestation run on main; no hosted release asset yet."
+  - control: "C9"
+    note: "Observe: mavlink signing false (allowed at Observe)."

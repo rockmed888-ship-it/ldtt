@@ -1,0 +1,30 @@
+{
+  "phase": "Phase 2",
+  "allowed_command_ids_sent": [
+    512,
+    511
+  ],
+  "expected_allowed_ids": [
+    512,
+    511
+  ],
+  "refused": [
+    {
+      "msg": "REQUEST_DATA_STREAM",
+      "error": "TX refused: REQUEST_DATA_STREAM locked out (Phase 2 creator lock)"
+    },
+    {
+      "msg": "LOG_REQUEST_LIST",
+      "error": "TX refused: LOG_REQUEST_LIST locked out (Phase 2 creator lock)"
+    },
+    {
+      "msg": "PARAM_SET",
+      "error": "TX refused: PARAM_SET not in tx_allowlist"
+    },
+    {
+      "msg": "COMMAND_LONG/ARM",
+      "error": "TX refused: COMMAND_LONG command 'MAV_CMD_COMPONENT_ARM_DISARM' not in command_allowlist"
+    }
+  ],
+  "note": "Proves TX gate: only REQUEST_MESSAGE(512)/SET_MESSAGE_INTERVAL(511); REQUEST_DATA_STREAM and LOG_REQUEST_* refused. Complements fake-peer smoke (no wire pcap)."
+}

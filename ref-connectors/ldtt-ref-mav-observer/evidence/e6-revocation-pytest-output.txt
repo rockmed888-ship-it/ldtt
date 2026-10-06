@@ -1,0 +1,39 @@
+# E6 (C4) — regenerated 2026-10-06 04:14 CDT — LDTT_DEV unset; no dev-only flags
+$ env -u LDTT_DEV pytest -v tests/test_revocation.py tests/test_cosign_and_locks.py tests/test_n3_dev_flags.py
+============================= test session starts ==============================
+platform linux -- Python 3.13.5, pytest-9.1.1, pluggy-1.6.0 -- ./.venv/bin/python
+rootdir: .
+configfile: pyproject.toml
+plugins: platformdirs-4.12.3
+collecting ... collected 28 items
+
+tests/test_revocation.py::test_ok_empty_list PASSED                      [  3%]
+tests/test_revocation.py::test_revoked PASSED                            [  7%]
+tests/test_revocation.py::test_unreachable_within_staleness_uses_cache PASSED [ 10%]
+tests/test_revocation.py::test_beyond_staleness_fail_closed PASSED       [ 14%]
+tests/test_revocation.py::test_rollback_rejected_fail_closed PASSED      [ 17%]
+tests/test_revocation.py::test_wildcard_version_revokes PASSED           [ 21%]
+tests/test_revocation.py::test_unverified_never_loads_list_no_cache_fail_closed PASSED [ 25%]
+tests/test_revocation.py::test_unverified_keeps_last_verified_within_staleness PASSED [ 28%]
+tests/test_revocation.py::test_save_cache_preserves_original_body_and_bundle PASSED [ 32%]
+tests/test_revocation.py::test_tampered_cache_ignored_unreachable_no_cache PASSED [ 35%]
+tests/test_revocation.py::test_load_cache_reverify_ok_then_unreachable_uses_cache PASSED [ 39%]
+tests/test_revocation.py::test_load_cache_rollback_ignored PASSED        [ 42%]
+tests/test_cosign_and_locks.py::test_placeholder_files_exist PASSED      [ 46%]
+tests/test_cosign_and_locks.py::test_inprocess_local_key_verify_placeholder PASSED [ 50%]
+tests/test_cosign_and_locks.py::test_cosign_cli_verify_placeholder_when_available PASSED [ 53%]
+tests/test_cosign_and_locks.py::test_a1_missing_verify_no_fail_open PASSED [ 57%]
+tests/test_n3_dev_flags.py::test_dev_mode_requires_exact_value PASSED    [ 60%]
+tests/test_n3_dev_flags.py::test_used_dev_flags PASSED                   [ 64%]
+tests/test_n3_dev_flags.py::test_flag_refused_without_dev_env[--skip-revoke] PASSED [ 67%]
+tests/test_n3_dev_flags.py::test_flag_refused_without_dev_env[--no-interval-check] PASSED [ 71%]
+tests/test_n3_dev_flags.py::test_flag_refused_with_wrong_dev_value[0] PASSED [ 75%]
+tests/test_n3_dev_flags.py::test_flag_refused_with_wrong_dev_value[true] PASSED [ 78%]
+tests/test_n3_dev_flags.py::test_flag_refused_with_wrong_dev_value[] PASSED [ 82%]
+tests/test_n3_dev_flags.py::test_skip_revoke_with_dev_env_audits_skip PASSED [ 85%]
+tests/test_n3_dev_flags.py::test_no_interval_check_with_dev_env_runs_startup_and_audits_interval_skip PASSED [ 89%]
+tests/test_n3_dev_flags.py::test_release_run_has_no_dev_markers PASSED   [ 92%]
+tests/test_n3_dev_flags.py::test_evidence_checker_flags_skip_runs PASSED [ 96%]
+tests/test_n3_dev_flags.py::test_repo_evidence_does_not_rely_on_skip_flags PASSED [100%]
+
+============================== 28 passed in 0.23s ==============================

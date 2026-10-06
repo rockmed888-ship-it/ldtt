@@ -1,0 +1,161 @@
+{
+  "phase": "Phase 2",
+  "draft": true,
+  "mode": "REAL_SITL",
+  "started_utc": "2026-10-06T08:56:50Z",
+  "sitl": {
+    "backend": "ardupilot_official_prebuilt_sitl",
+    "binary_url": "https://firmware.ardupilot.org/Copter/stable/SITL_x86_64_linux_gnu/arducopter",
+    "binary_sha256": "011627d41dd95640c3aca02d45283474be48721c8b1bb7a4b234d38b69063482",
+    "git_commit": "dbe792162d06cab66c3475fd5556bf7a120f119e",
+    "apm_version": "ArduCopter V4.7.1",
+    "defaults": "Tools/autotest/default_params/copter.parm@dbe792162d06cab66c3475fd5556bf7a120f119e",
+    "cmd": "/workspace/ldtt/sitl-bin/arducopter -w --model quad --home -35.363261,149.165230,584,353 --serial0 tcp:0 --defaults /workspace/ldtt/sitl-bin/copter.parm"
+  },
+  "connection": "tcp:127.0.0.1:5760",
+  "criteria": {
+    "connect_real_sitl_and_rx_heartbeat": true,
+    "rx_telemetry_beyond_heartbeat": true,
+    "global_position_valid_near_home": true,
+    "stream_setup_only_511_512": true,
+    "stream_cmds_acked_accepted": true,
+    "tx_wire_subset_of_allowlist": true,
+    "no_locked_or_write_msgs_on_wire": true,
+    "no_forbidden_commands_on_wire": true,
+    "all_negative_attempts_refused": true,
+    "refuse_events_audited": true,
+    "heartbeat_exempt_on_real_link": true,
+    "vehicle_remained_disarmed": true,
+    "mavlink2_framing": true,
+    "audit_minimum_includes_written": true,
+    "revocation_check_ran_cosign_verified": true,
+    "observer_exit_0": true
+  },
+  "all_criteria_met": true,
+  "phase_a": {
+    "returncode": 0,
+    "displayed_counts": {
+      "HEARTBEAT": 62,
+      "SYS_STATUS": 61,
+      "GLOBAL_POSITION_INT": 59,
+      "ATTITUDE": 59,
+      "BATTERY_STATUS": 59
+    },
+    "last_global_position": "GLOBAL_POSITION_INT lat=-35.363261 lon=149.165230 alt_m=584.1",
+    "revocation_line": "revocation check: ok (cosign=verified)",
+    "tx_counts": {
+      "COMMAND_LONG": 10,
+      "HEARTBEAT": 7
+    },
+    "tx_frame_magic": {
+      "mavlink2_0xFD": 17
+    },
+    "rx_types": {
+      "ATTITUDE": 59,
+      "BATTERY_STATUS": 59,
+      "COMMAND_ACK": 10,
+      "GLOBAL_POSITION_INT": 59,
+      "GPS_GLOBAL_ORIGIN": 1,
+      "HEARTBEAT": 63,
+      "HOME_POSITION": 1,
+      "SYS_STATUS": 61
+    },
+    "rx_dropped_by_filter": {
+      "COMMAND_ACK": 10,
+      "GPS_GLOBAL_ORIGIN": 1,
+      "HOME_POSITION": 1
+    },
+    "command_acks": [
+      {
+        "command": 511,
+        "result": 0
+      },
+      {
+        "command": 512,
+        "result": 0
+      },
+      {
+        "command": 511,
+        "result": 0
+      },
+      {
+        "command": 512,
+        "result": 0
+      },
+      {
+        "command": 511,
+        "result": 0
+      },
+      {
+        "command": 512,
+        "result": 0
+      },
+      {
+        "command": 511,
+        "result": 0
+      },
+      {
+        "command": 512,
+        "result": 0
+      },
+      {
+        "command": 511,
+        "result": 0
+      },
+      {
+        "command": 512,
+        "result": 0
+      }
+    ],
+    "vehicle_heartbeat": {
+      "autopilot": 3,
+      "compid": 0,
+      "mavlink_version": 3,
+      "sysid": 1,
+      "type": 2
+    },
+    "audit_events": [
+      "session",
+      "scope_grant",
+      "egress_opt_in",
+      "revocation_check",
+      "session"
+    ]
+  },
+  "phase_b": {
+    "vehicle_hb_type": 2,
+    "refused": {
+      "REQUEST_DATA_STREAM": "refused: TX refused: REQUEST_DATA_STREAM locked out (Phase 2 creator lock)",
+      "LOG_REQUEST_LIST": "refused: TX refused: LOG_REQUEST_LIST locked out (Phase 2 creator lock)",
+      "LOG_REQUEST_DATA": "refused: TX refused: LOG_REQUEST_DATA locked out (Phase 2 creator lock)",
+      "LOG_REQUEST_END": "refused: TX refused: LOG_REQUEST_END locked out (Phase 2 creator lock)",
+      "PARAM_SET": "refused: TX refused: PARAM_SET not in tx_allowlist",
+      "COMMAND_LONG:MAV_CMD_COMPONENT_ARM_DISARM": "refused: TX refused: COMMAND_LONG command 'MAV_CMD_COMPONENT_ARM_DISARM' not in command_allowlist",
+      "COMMAND_LONG:400": "refused: TX refused: COMMAND_LONG command 400 not in command_allowlist",
+      "COMMAND_LONG:22_TAKEOFF": "refused: TX refused: COMMAND_LONG command 22 not in command_allowlist",
+      "COMMAND_LONG:246_REBOOT": "refused: TX refused: COMMAND_LONG command 246 not in command_allowlist"
+    },
+    "heartbeat_sent_with_empty_bucket": 5,
+    "read_with_empty_bucket": "rate-limited: rate limit exceeded: reads_per_s=20.0",
+    "vehicle_heartbeats_after": 41,
+    "vehicle_armed_seen": false,
+    "tx_counts": {
+      "HEARTBEAT": 5
+    },
+    "audit_events": [
+      "session",
+      "refuse",
+      "refuse",
+      "refuse",
+      "refuse",
+      "refuse",
+      "refuse",
+      "refuse",
+      "refuse",
+      "refuse",
+      "refuse",
+      "session"
+    ]
+  },
+  "not_a_fake_peer": true
+}

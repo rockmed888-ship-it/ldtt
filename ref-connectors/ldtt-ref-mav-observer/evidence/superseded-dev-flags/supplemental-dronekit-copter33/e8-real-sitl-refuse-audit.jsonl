@@ -1,0 +1,12 @@
+{"action":"start","event":"session","phase":"Phase 2","test":"real_sitl_negative_tx","ts":"2026-10-06T08:55:25Z"}
+{"command":null,"event":"refuse","msg":"REQUEST_DATA_STREAM","reason":"TX refused: REQUEST_DATA_STREAM locked out (Phase 2 creator lock)","ts":"2026-10-06T08:55:26Z"}
+{"command":null,"event":"refuse","msg":"LOG_REQUEST_LIST","reason":"TX refused: LOG_REQUEST_LIST locked out (Phase 2 creator lock)","ts":"2026-10-06T08:55:26Z"}
+{"command":null,"event":"refuse","msg":"LOG_REQUEST_DATA","reason":"TX refused: LOG_REQUEST_DATA locked out (Phase 2 creator lock)","ts":"2026-10-06T08:55:26Z"}
+{"command":null,"event":"refuse","msg":"LOG_REQUEST_END","reason":"TX refused: LOG_REQUEST_END locked out (Phase 2 creator lock)","ts":"2026-10-06T08:55:26Z"}
+{"command":null,"event":"refuse","msg":"PARAM_SET","reason":"TX refused: PARAM_SET not in tx_allowlist","ts":"2026-10-06T08:55:26Z"}
+{"command":"MAV_CMD_COMPONENT_ARM_DISARM","event":"refuse","msg":"COMMAND_LONG","reason":"TX refused: COMMAND_LONG command 'MAV_CMD_COMPONENT_ARM_DISARM' not in command_allowlist","ts":"2026-10-06T08:55:26Z"}
+{"command":400,"event":"refuse","msg":"COMMAND_LONG","reason":"TX refused: COMMAND_LONG command 400 not in command_allowlist","ts":"2026-10-06T08:55:26Z"}
+{"command":22,"event":"refuse","msg":"COMMAND_LONG","reason":"TX refused: COMMAND_LONG command 22 not in command_allowlist","ts":"2026-10-06T08:55:26Z"}
+{"command":246,"event":"refuse","msg":"COMMAND_LONG","reason":"TX refused: COMMAND_LONG command 246 not in command_allowlist","ts":"2026-10-06T08:55:26Z"}
+{"command":"MAV_CMD_REQUEST_MESSAGE","event":"refuse","msg":"COMMAND_LONG","reason":"rate limit exceeded: reads_per_s=20.0","ts":"2026-10-06T08:55:26Z"}
+{"action":"stop","event":"session","reason":"test_complete","ts":"2026-10-06T08:55:31Z"}

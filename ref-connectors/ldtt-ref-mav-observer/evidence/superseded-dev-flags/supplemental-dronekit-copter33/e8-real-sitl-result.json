@@ -1,0 +1,104 @@
+{
+  "phase": "Phase 2",
+  "draft": true,
+  "mode": "REAL_SITL",
+  "started_utc": "2026-10-06T08:54:33Z",
+  "sitl": {
+    "backend": "dronekit_sitl_copter_3.3",
+    "cmd": "/workspace/ldtt/ref-connectors/ldtt-ref-mav-observer/.venv/bin/dronekit-sitl copter-3.3 --home=-35.363261,149.165230,584,353"
+  },
+  "connection": "tcp:127.0.0.1:5760",
+  "criteria": {
+    "connect_real_sitl_and_rx_heartbeat": true,
+    "rx_telemetry_beyond_heartbeat": false,
+    "global_position_valid_near_home": false,
+    "stream_setup_only_511_512": true,
+    "stream_cmds_acked_accepted": false,
+    "tx_wire_subset_of_allowlist": true,
+    "no_locked_or_write_msgs_on_wire": true,
+    "no_forbidden_commands_on_wire": true,
+    "all_negative_attempts_refused": true,
+    "refuse_events_audited": true,
+    "heartbeat_exempt_on_real_link": true,
+    "vehicle_remained_disarmed": true,
+    "mavlink2_framing": true,
+    "audit_minimum_includes_written": true,
+    "revocation_check_ran_cosign_verified": true,
+    "observer_exit_0": true
+  },
+  "all_criteria_met": false,
+  "phase_a": {
+    "returncode": 0,
+    "displayed_counts": {
+      "HEARTBEAT": 40,
+      "SYS_STATUS": 0,
+      "GLOBAL_POSITION_INT": 0,
+      "ATTITUDE": 0,
+      "BATTERY_STATUS": 0
+    },
+    "last_global_position": null,
+    "revocation_line": "revocation check: ok (cosign=verified)",
+    "tx_counts": {
+      "COMMAND_LONG": 10,
+      "HEARTBEAT": 40
+    },
+    "tx_frame_magic": {
+      "mavlink2_0xFD": 50
+    },
+    "rx_types": {
+      "HEARTBEAT": 41
+    },
+    "rx_dropped_by_filter": {},
+    "command_acks": [],
+    "vehicle_heartbeat": {
+      "autopilot": 3,
+      "compid": 0,
+      "mavlink_version": 3,
+      "sysid": 1,
+      "type": 2
+    },
+    "audit_events": [
+      "session",
+      "scope_grant",
+      "egress_opt_in",
+      "revocation_check",
+      "session"
+    ]
+  },
+  "phase_b": {
+    "vehicle_hb_type": 2,
+    "refused": {
+      "REQUEST_DATA_STREAM": "refused: TX refused: REQUEST_DATA_STREAM locked out (Phase 2 creator lock)",
+      "LOG_REQUEST_LIST": "refused: TX refused: LOG_REQUEST_LIST locked out (Phase 2 creator lock)",
+      "LOG_REQUEST_DATA": "refused: TX refused: LOG_REQUEST_DATA locked out (Phase 2 creator lock)",
+      "LOG_REQUEST_END": "refused: TX refused: LOG_REQUEST_END locked out (Phase 2 creator lock)",
+      "PARAM_SET": "refused: TX refused: PARAM_SET not in tx_allowlist",
+      "COMMAND_LONG:MAV_CMD_COMPONENT_ARM_DISARM": "refused: TX refused: COMMAND_LONG command 'MAV_CMD_COMPONENT_ARM_DISARM' not in command_allowlist",
+      "COMMAND_LONG:400": "refused: TX refused: COMMAND_LONG command 400 not in command_allowlist",
+      "COMMAND_LONG:22_TAKEOFF": "refused: TX refused: COMMAND_LONG command 22 not in command_allowlist",
+      "COMMAND_LONG:246_REBOOT": "refused: TX refused: COMMAND_LONG command 246 not in command_allowlist"
+    },
+    "heartbeat_sent_with_empty_bucket": 5,
+    "read_with_empty_bucket": "rate-limited: rate limit exceeded: reads_per_s=20.0",
+    "vehicle_heartbeats_after": 5,
+    "vehicle_armed_seen": false,
+    "tx_counts": {
+      "HEARTBEAT": 5
+    },
+    "audit_events": [
+      "session",
+      "refuse",
+      "refuse",
+      "refuse",
+      "refuse",
+      "refuse",
+      "refuse",
+      "refuse",
+      "refuse",
+      "refuse",
+      "refuse",
+      "session"
+    ]
+  },
+  "not_a_fake_peer": true
+}

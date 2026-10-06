@@ -1,0 +1,52 @@
+$ /workspace/ldtt/ref-connectors/ldtt-ref-mav-observer/.venv/bin/python -m ldtt_ref_mav_observer --manifest /workspace/ldtt/ref-connectors/ldtt-ref-mav-observer/ldtt.yaml --connection tcp:127.0.0.1:5760 --revocation-list /workspace/ldtt/ref-connectors/ldtt-ref-mav-observer/placeholders/revocations/revocations.json --cosign-key /workspace/ldtt/ref-connectors/ldtt-ref-mav-observer/placeholders/keys/ldtt-placeholder.pub --audit-path evidence/supplemental-dronekit-copter33/e5-real-sitl-audit.jsonl --max-messages 40 --no-interval-check --wait-heartbeat-s 30 --heartbeat-hz 1 --wire-capture evidence/supplemental-dronekit-copter33/e8-real-sitl-wire-capture.json
+ldtt.yaml validates against schema (E1 path)
+revocation check: ok (cosign=verified)
+Connected (tcp:127.0.0.1:5760).
+Vehicle HEARTBEAT sysid=1 compid=0 type=2 autopilot=3
+Setting up streams (Observe read cmds only: REQUEST_MESSAGE / SET_MESSAGE_INTERVAL)...
+TX locked out: REQUEST_DATA_STREAM, LOG_REQUEST_* (Phase 2 creator locks)
+Local display only — Ctrl+C to stop. No egress.
+HEARTBEAT type=2 autopilot=3 base_mode=81
+HEARTBEAT type=2 autopilot=3 base_mode=81
+HEARTBEAT type=2 autopilot=3 base_mode=81
+HEARTBEAT type=2 autopilot=3 base_mode=81
+HEARTBEAT type=2 autopilot=3 base_mode=81
+HEARTBEAT type=2 autopilot=3 base_mode=81
+HEARTBEAT type=2 autopilot=3 base_mode=81
+HEARTBEAT type=2 autopilot=3 base_mode=81
+HEARTBEAT type=2 autopilot=3 base_mode=81
+HEARTBEAT type=2 autopilot=3 base_mode=81
+HEARTBEAT type=2 autopilot=3 base_mode=81
+HEARTBEAT type=2 autopilot=3 base_mode=81
+HEARTBEAT type=2 autopilot=3 base_mode=81
+HEARTBEAT type=2 autopilot=3 base_mode=81
+HEARTBEAT type=2 autopilot=3 base_mode=81
+HEARTBEAT type=2 autopilot=3 base_mode=81
+HEARTBEAT type=2 autopilot=3 base_mode=81
+HEARTBEAT type=2 autopilot=3 base_mode=81
+HEARTBEAT type=2 autopilot=3 base_mode=81
+HEARTBEAT type=2 autopilot=3 base_mode=81
+HEARTBEAT type=2 autopilot=3 base_mode=81
+HEARTBEAT type=2 autopilot=3 base_mode=81
+HEARTBEAT type=2 autopilot=3 base_mode=81
+HEARTBEAT type=2 autopilot=3 base_mode=81
+HEARTBEAT type=2 autopilot=3 base_mode=81
+HEARTBEAT type=2 autopilot=3 base_mode=81
+HEARTBEAT type=2 autopilot=3 base_mode=81
+HEARTBEAT type=2 autopilot=3 base_mode=81
+HEARTBEAT type=2 autopilot=3 base_mode=81
+HEARTBEAT type=2 autopilot=3 base_mode=81
+HEARTBEAT type=2 autopilot=3 base_mode=81
+HEARTBEAT type=2 autopilot=3 base_mode=81
+HEARTBEAT type=2 autopilot=3 base_mode=81
+HEARTBEAT type=2 autopilot=3 base_mode=81
+HEARTBEAT type=2 autopilot=3 base_mode=81
+HEARTBEAT type=2 autopilot=3 base_mode=81
+HEARTBEAT type=2 autopilot=3 base_mode=81
+HEARTBEAT type=2 autopilot=3 base_mode=81
+HEARTBEAT type=2 autopilot=3 base_mode=81
+HEARTBEAT type=2 autopilot=3 base_mode=81
+
+--- stderr ---
+
+returncode=0

@@ -1,0 +1,203 @@
+{
+  "command_acks": [],
+  "rx_dropped_by_filter": {},
+  "rx_types": {
+    "HEARTBEAT": 41
+  },
+  "tx": [
+    {
+      "msg": "HEARTBEAT"
+    },
+    {
+      "command": 511,
+      "msg": "COMMAND_LONG",
+      "param1": 0.0,
+      "param2": 100000.0
+    },
+    {
+      "command": 512,
+      "msg": "COMMAND_LONG",
+      "param1": 0.0,
+      "param2": 0.0
+    },
+    {
+      "command": 511,
+      "msg": "COMMAND_LONG",
+      "param1": 1.0,
+      "param2": 100000.0
+    },
+    {
+      "command": 512,
+      "msg": "COMMAND_LONG",
+      "param1": 1.0,
+      "param2": 0.0
+    },
+    {
+      "command": 511,
+      "msg": "COMMAND_LONG",
+      "param1": 33.0,
+      "param2": 100000.0
+    },
+    {
+      "command": 512,
+      "msg": "COMMAND_LONG",
+      "param1": 33.0,
+      "param2": 0.0
+    },
+    {
+      "command": 511,
+      "msg": "COMMAND_LONG",
+      "param1": 30.0,
+      "param2": 100000.0
+    },
+    {
+      "command": 512,
+      "msg": "COMMAND_LONG",
+      "param1": 30.0,
+      "param2": 0.0
+    },
+    {
+      "command": 511,
+      "msg": "COMMAND_LONG",
+      "param1": 147.0,
+      "param2": 100000.0
+    },
+    {
+      "command": 512,
+      "msg": "COMMAND_LONG",
+      "param1": 147.0,
+      "param2": 0.0
+    },
+    {
+      "msg": "HEARTBEAT"
+    },
+    {
+      "msg": "HEARTBEAT"
+    },
+    {
+      "msg": "HEARTBEAT"
+    },
+    {
+      "msg": "HEARTBEAT"
+    },
+    {
+      "msg": "HEARTBEAT"
+    },
+    {
+      "msg": "HEARTBEAT"
+    },
+    {
+      "msg": "HEARTBEAT"
+    },
+    {
+      "msg": "HEARTBEAT"
+    },
+    {
+      "msg": "HEARTBEAT"
+    },
+    {
+      "msg": "HEARTBEAT"
+    },
+    {
+      "msg": "HEARTBEAT"
+    },
+    {
+      "msg": "HEARTBEAT"
+    },
+    {
+      "msg": "HEARTBEAT"
+    },
+    {
+      "msg": "HEARTBEAT"
+    },
+    {
+      "msg": "HEARTBEAT"
+    },
+    {
+      "msg": "HEARTBEAT"
+    },
+    {
+      "msg": "HEARTBEAT"
+    },
+    {
+      "msg": "HEARTBEAT"
+    },
+    {
+      "msg": "HEARTBEAT"
+    },
+    {
+      "msg": "HEARTBEAT"
+    },
+    {
+      "msg": "HEARTBEAT"
+    },
+    {
+      "msg": "HEARTBEAT"
+    },
+    {
+      "msg": "HEARTBEAT"
+    },
+    {
+      "msg": "HEARTBEAT"
+    },
+    {
+      "msg": "HEARTBEAT"
+    },
+    {
+      "msg": "HEARTBEAT"
+    },
+    {
+      "msg": "HEARTBEAT"
+    },
+    {
+      "msg": "HEARTBEAT"
+    },
+    {
+      "msg": "HEARTBEAT"
+    },
+    {
+      "msg": "HEARTBEAT"
+    },
+    {
+      "msg": "HEARTBEAT"
+    },
+    {
+      "msg": "HEARTBEAT"
+    },
+    {
+      "msg": "HEARTBEAT"
+    },
+    {
+      "msg": "HEARTBEAT"
+    },
+    {
+      "msg": "HEARTBEAT"
+    },
+    {
+      "msg": "HEARTBEAT"
+    },
+    {
+      "msg": "HEARTBEAT"
+    },
+    {
+      "msg": "HEARTBEAT"
+    },
+    {
+      "msg": "HEARTBEAT"
+    }
+  ],
+  "tx_counts": {
+    "COMMAND_LONG": 10,
+    "HEARTBEAT": 40
+  },
+  "tx_frame_magic": {
+    "mavlink2_0xFD": 50
+  },
+  "vehicle_heartbeat": {
+    "autopilot": 3,
+    "compid": 0,
+    "mavlink_version": 3,
+    "sysid": 1,
+    "type": 2
+  }
+}

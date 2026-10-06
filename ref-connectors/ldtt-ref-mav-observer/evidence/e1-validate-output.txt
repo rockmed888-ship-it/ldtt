@@ -1,0 +1,1 @@
+VALID: ldtt.yaml passes schema/ldtt.schema.json

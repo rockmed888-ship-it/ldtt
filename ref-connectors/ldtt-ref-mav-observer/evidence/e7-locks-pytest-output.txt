@@ -1,0 +1,39 @@
+# E7 (C6) — regenerated 2026-10-06 04:14 CDT
+============================= test session starts ==============================
+platform linux -- Python 3.13.5, pytest-9.1.1, pluggy-1.6.0 -- ./.venv/bin/python
+rootdir: .
+configfile: pyproject.toml
+plugins: platformdirs-4.12.3
+collecting ... collected 29 items
+
+tests/test_rate_limiter.py::test_allows_within_budget PASSED             [  3%]
+tests/test_rate_limiter.py::test_refill PASSED                           [  6%]
+tests/test_rate_limiter.py::test_check_raises PASSED                     [ 10%]
+tests/test_rate_limiter.py::test_zero_rate_blocks PASSED                 [ 13%]
+tests/test_heartbeat_exempt.py::test_exempt_set_is_heartbeat_only PASSED [ 17%]
+tests/test_heartbeat_exempt.py::test_limiter_check_skips_heartbeat_without_consuming PASSED [ 20%]
+tests/test_heartbeat_exempt.py::test_heartbeat_sends_when_bucket_empty PASSED [ 24%]
+tests/test_heartbeat_exempt.py::test_heartbeat_still_allowlist_gated PASSED [ 27%]
+tests/test_heartbeat_hz_cap.py::test_heartbeat_hz_max_constant PASSED    [ 31%]
+tests/test_heartbeat_hz_cap.py::test_heartbeat_hz_over_cap_exits PASSED  [ 34%]
+tests/test_heartbeat_hz_cap.py::test_heartbeat_hz_at_cap_ok_validate PASSED [ 37%]
+tests/test_allowlist.py::test_rx_filter PASSED                           [ 41%]
+tests/test_allowlist.py::test_tx_refuse_param_set PASSED                 [ 44%]
+tests/test_allowlist.py::test_tx_refuse_request_data_stream_locked PASSED [ 48%]
+tests/test_allowlist.py::test_tx_refuse_log_request_locked PASSED        [ 51%]
+tests/test_allowlist.py::test_manifest_cannot_readd_locked_tx PASSED     [ 55%]
+tests/test_allowlist.py::test_tx_refuse_arm_command PASSED               [ 58%]
+tests/test_allowlist.py::test_tx_allow_request_message PASSED            [ 62%]
+tests/test_allowlist.py::test_client_refuses_and_allows PASSED           [ 65%]
+tests/test_allowlist.py::test_manifest_cannot_widen_tx PASSED            [ 68%]
+tests/test_audit_refuse.py::test_refuse_and_deny_not_in_includes_but_written PASSED [ 72%]
+tests/test_audit_refuse.py::test_refuse_written_even_with_empty_includes PASSED [ 75%]
+tests/test_audit_refuse.py::test_includes_is_minimum_set PASSED          [ 79%]
+tests/test_audit_refuse.py::test_client_refuse_is_audited[MAV_CMD_COMPONENT_ARM_DISARM] PASSED [ 82%]
+tests/test_audit_refuse.py::test_client_refuse_is_audited[MAV_CMD_NAV_TAKEOFF] PASSED [ 86%]
+tests/test_audit_refuse.py::test_client_refuse_is_audited[400] PASSED    [ 89%]
+tests/test_audit_refuse.py::test_locked_message_refuse_is_audited[REQUEST_DATA_STREAM] PASSED [ 93%]
+tests/test_audit_refuse.py::test_locked_message_refuse_is_audited[LOG_REQUEST_LIST] PASSED [ 96%]
+tests/test_audit_refuse.py::test_locked_message_refuse_is_audited[PARAM_SET] PASSED [100%]
+
+============================== 29 passed in 0.13s ==============================

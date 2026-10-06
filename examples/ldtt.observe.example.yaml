@@ -1,0 +1,75 @@
+ldtt_spec: "0.1.4"
+connector:
+  id: "org.example.mav-observer"          # reverse-DNS, stable across versions
+  name: "Example MAVLink Observer"
+  version: "1.2.0"                        # semver
+  publisher: "Example Org"
+  security_contact: "security@example.org"
+  source_url: "https://example.org/src/mav-observer"
+  license: "Apache-2.0"                   # SPDX (C1)
+  sbom: "sbom.spdx.json"                  # (C1)
+
+build:                                    # (C3)
+  artifact_digest: "sha256:0000000000000000000000000000000000000000000000000000000000000000"
+  signature: "dist/mav-observer.sigstore.json"   # cosign bundle
+  provenance: "dist/provenance.intoto.jsonl"
+  source_commit: "0000000000000000000000000000000000000000"
+
+transport:
+  kind: "mavlink2"                        # mavlink2 | mcp
+  mavlink:
+    signing: false                        # must be true at Command, or listed in known_limitations (C9)
+    rx_allowlist: [HEARTBEAT, SYS_STATUS, GLOBAL_POSITION_INT, ATTITUDE, BATTERY_STATUS]
+    tx_allowlist: [HEARTBEAT, REQUEST_DATA_STREAM, PARAM_REQUEST_LIST, COMMAND_LONG]   # level-limited; Observe: read-only set
+    command_allowlist: [MAV_CMD_REQUEST_MESSAGE, MAV_CMD_SET_MESSAGE_INTERVAL]   # Observe: these two read requests only
+    # param_allowlist: []                 # required with operate:params; no protected settings (§2.1)
+  # mcp:                                  # when kind: mcp
+  #   tools:
+  #     - name: "get_telemetry"
+  #       scope: "observe:telemetry"
+  #       writes: false
+
+auth:
+  method: "local-only"                    # local-only | token | oauth2 | mtls
+  token_storage: "none"                   # never plaintext in config
+  session_ttl_s: 3600
+
+level: "observe"                          # observe | operate | command
+scopes:                                   # least privilege
+  - "observe:telemetry"
+  - "observe:logs"
+  # operate:mission, operate:geofence, operate:params, operate:payload
+  # command:arm, command:takeoff_land, command:mode, command:reposition, command:mission_control
+
+# heartbeat:                              # required at Operate/Command (C8)
+#   interval_s: 1
+#   timeout_s: 5
+#   on_timeout: "halt_writes"             # only allowed value in v0.1
+
+rate_limits:                              # (C6) Observe: reads only
+  reads_per_s: 20
+  # writes_per_min / commands_per_min: omit or 0 at Observe
+
+privacy:                                  # (C2)
+  collects: ["vehicle_location", "telemetry"]
+  personal_data: []                       # categories, e.g. operator_identity, precise_location,
+                                          # imagery_of_people, device_identifiers; [] = none
+  egress: []                              # each entry: destination, data, purpose
+  egress_runtime_opt_in: true             # required true whenever egress is non-empty
+  retention_days: 0                       # 0 = not stored beyond session
+
+audit_log:                                # (C5)
+  format: "jsonl"
+  path: "~/.ldtt/audit/org.example.mav-observer.jsonl"
+  includes: ["session", "scope_grant", "egress_opt_in", "revocation_check"]
+
+revocation:                               # (C4)
+  list_url: "https://example.org/ldtt/revocations/revocations.json"   # https://, file:, or relative path (§4 note)
+  check_interval_s: 3600
+  max_staleness_s: 86400
+
+# operator_confirmation:                  # required at Operate/Command (C7)
+#   required_for: ["operate:*", "command:*"]
+#   ui: "how confirmation is shown"
+
+known_limitations: []                     # each entry: {control: "C1".."C9", note: "..."}, stated plainly

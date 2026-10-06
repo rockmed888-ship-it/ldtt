@@ -1,0 +1,156 @@
+{
+  "command_acks": [
+    {
+      "command": 511,
+      "result": 0
+    },
+    {
+      "command": 512,
+      "result": 0
+    },
+    {
+      "command": 511,
+      "result": 0
+    },
+    {
+      "command": 512,
+      "result": 0
+    },
+    {
+      "command": 511,
+      "result": 0
+    },
+    {
+      "command": 512,
+      "result": 0
+    },
+    {
+      "command": 511,
+      "result": 0
+    },
+    {
+      "command": 512,
+      "result": 0
+    },
+    {
+      "command": 511,
+      "result": 0
+    },
+    {
+      "command": 512,
+      "result": 0
+    }
+  ],
+  "rx_dropped_by_filter": {
+    "COMMAND_ACK": 10,
+    "GPS_GLOBAL_ORIGIN": 1,
+    "HOME_POSITION": 1
+  },
+  "rx_types": {
+    "ATTITUDE": 59,
+    "BATTERY_STATUS": 59,
+    "COMMAND_ACK": 10,
+    "GLOBAL_POSITION_INT": 59,
+    "GPS_GLOBAL_ORIGIN": 1,
+    "HEARTBEAT": 63,
+    "HOME_POSITION": 1,
+    "SYS_STATUS": 61
+  },
+  "tx": [
+    {
+      "msg": "HEARTBEAT"
+    },
+    {
+      "command": 511,
+      "msg": "COMMAND_LONG",
+      "param1": 0.0,
+      "param2": 100000.0
+    },
+    {
+      "command": 512,
+      "msg": "COMMAND_LONG",
+      "param1": 0.0,
+      "param2": 0.0
+    },
+    {
+      "command": 511,
+      "msg": "COMMAND_LONG",
+      "param1": 1.0,
+      "param2": 100000.0
+    },
+    {
+      "command": 512,
+      "msg": "COMMAND_LONG",
+      "param1": 1.0,
+      "param2": 0.0
+    },
+    {
+      "command": 511,
+      "msg": "COMMAND_LONG",
+      "param1": 33.0,
+      "param2": 100000.0
+    },
+    {
+      "command": 512,
+      "msg": "COMMAND_LONG",
+      "param1": 33.0,
+      "param2": 0.0
+    },
+    {
+      "command": 511,
+      "msg": "COMMAND_LONG",
+      "param1": 30.0,
+      "param2": 100000.0
+    },
+    {
+      "command": 512,
+      "msg": "COMMAND_LONG",
+      "param1": 30.0,
+      "param2": 0.0
+    },
+    {
+      "command": 511,
+      "msg": "COMMAND_LONG",
+      "param1": 147.0,
+      "param2": 100000.0
+    },
+    {
+      "command": 512,
+      "msg": "COMMAND_LONG",
+      "param1": 147.0,
+      "param2": 0.0
+    },
+    {
+      "msg": "HEARTBEAT"
+    },
+    {
+      "msg": "HEARTBEAT"
+    },
+    {
+      "msg": "HEARTBEAT"
+    },
+    {
+      "msg": "HEARTBEAT"
+    },
+    {
+      "msg": "HEARTBEAT"
+    },
+    {
+      "msg": "HEARTBEAT"
+    }
+  ],
+  "tx_counts": {
+    "COMMAND_LONG": 10,
+    "HEARTBEAT": 7
+  },
+  "tx_frame_magic": {
+    "mavlink2_0xFD": 17
+  },
+  "vehicle_heartbeat": {
+    "autopilot": 3,
+    "compid": 0,
+    "mavlink_version": 3,
+    "sysid": 1,
+    "type": 2
+  }
+}

@@ -1,0 +1,110 @@
+{
+  "spdxVersion": "SPDX-2.3",
+  "dataLicense": "CC0-1.0",
+  "SPDXID": "SPDXRef-DOCUMENT",
+  "name": "ldtt-ref-mav-observer-0.1.0",
+  "documentNamespace": "https://github.com/dustindent9-cmyk/ldtt/spdx/ldtt-ref-mav-observer/0.1.0",
+  "creationInfo": {
+    "created": "2026-10-06T09:04:00Z",
+    "creators": [
+      "Tool: ldtt-phase2-draft-hand",
+      "Organization: LDTT"
+    ],
+    "comment": "Hand-draft SPDX from installed venv pins. Not syft/cdx generated. Phase 2 draft E2."
+  },
+  "packages": [
+    {
+      "name": "ldtt-ref-mav-observer",
+      "SPDXID": "SPDXRef-Package-connector",
+      "versionInfo": "0.1.0",
+      "downloadLocation": "NOASSERTION",
+      "filesAnalyzed": false,
+      "licenseConcluded": "Apache-2.0",
+      "licenseDeclared": "Apache-2.0",
+      "copyrightText": "NOASSERTION",
+      "supplier": "Organization: LDTT"
+    },
+    {
+      "name": "pymavlink",
+      "SPDXID": "SPDXRef-Package-pymavlink",
+      "versionInfo": "2.4.50",
+      "downloadLocation": "NOASSERTION",
+      "filesAnalyzed": false,
+      "licenseConcluded": "LGPL-3.0-only",
+      "licenseDeclared": "LGPL-3.0-only",
+      "copyrightText": "NOASSERTION"
+    },
+    {
+      "name": "PyYAML",
+      "SPDXID": "SPDXRef-Package-PyYAML",
+      "versionInfo": "6.0.3",
+      "downloadLocation": "NOASSERTION",
+      "filesAnalyzed": false,
+      "licenseConcluded": "MIT",
+      "licenseDeclared": "MIT",
+      "copyrightText": "NOASSERTION"
+    },
+    {
+      "name": "jsonschema",
+      "SPDXID": "SPDXRef-Package-jsonschema",
+      "versionInfo": "4.26.0",
+      "downloadLocation": "NOASSERTION",
+      "filesAnalyzed": false,
+      "licenseConcluded": "MIT",
+      "licenseDeclared": "MIT",
+      "copyrightText": "NOASSERTION"
+    },
+    {
+      "name": "sigstore",
+      "SPDXID": "SPDXRef-Package-sigstore",
+      "versionInfo": "3.6.7",
+      "downloadLocation": "NOASSERTION",
+      "filesAnalyzed": false,
+      "licenseConcluded": "Apache-2.0",
+      "licenseDeclared": "Apache-2.0",
+      "copyrightText": "NOASSERTION"
+    },
+    {
+      "name": "cryptography",
+      "SPDXID": "SPDXRef-Package-cryptography",
+      "versionInfo": "46.0.7",
+      "downloadLocation": "NOASSERTION",
+      "filesAnalyzed": false,
+      "licenseConcluded": "Apache-2.0 OR BSD-3-Clause",
+      "licenseDeclared": "Apache-2.0 OR BSD-3-Clause",
+      "copyrightText": "NOASSERTION"
+    }
+  ],
+  "relationships": [
+    {
+      "spdxElementId": "SPDXRef-DOCUMENT",
+      "relationshipType": "DESCRIBES",
+      "relatedSpdxElement": "SPDXRef-Package-connector"
+    },
+    {
+      "spdxElementId": "SPDXRef-Package-connector",
+      "relationshipType": "DEPENDS_ON",
+      "relatedSpdxElement": "SPDXRef-Package-pymavlink"
+    },
+    {
+      "spdxElementId": "SPDXRef-Package-connector",
+      "relationshipType": "DEPENDS_ON",
+      "relatedSpdxElement": "SPDXRef-Package-PyYAML"
+    },
+    {
+      "spdxElementId": "SPDXRef-Package-connector",
+      "relationshipType": "DEPENDS_ON",
+      "relatedSpdxElement": "SPDXRef-Package-jsonschema"
+    },
+    {
+      "spdxElementId": "SPDXRef-Package-connector",
+      "relationshipType": "DEPENDS_ON",
+      "relatedSpdxElement": "SPDXRef-Package-sigstore"
+    },
+    {
+      "spdxElementId": "SPDXRef-Package-connector",
+      "relationshipType": "DEPENDS_ON",
+      "relatedSpdxElement": "SPDXRef-Package-cryptography"
+    }
+  ]
+}

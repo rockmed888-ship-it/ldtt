@@ -1,0 +1,33 @@
+[build-system]
+# Pinned for reproducible wheel digest (E3/C3)
+requires = ["setuptools==84.0.0", "wheel==0.48.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "ldtt-ref-mav-observer"
+version = "0.1.0"
+description = "LDTT Phase 2 Observe reference connector — read-only MAVLink 2 telemetry (Linked Drone Tool Trust)"
+readme = "README-pkg.md"  # stable; doc edits must not change wheel digest
+requires-python = ">=3.11"
+license = { text = "Apache-2.0" }
+authors = [{ name = "LDTT" }]
+dependencies = [
+  "pymavlink>=2.4.41",
+  "PyYAML>=6.0",
+  "jsonschema>=4.20",
+  "sigstore>=3.6,<4",
+  "cryptography>=42",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=7.4"]
+
+[project.scripts]
+ldtt-ref-mav-observer = "ldtt_ref_mav_observer.__main__:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]

@@ -1,0 +1,312 @@
+$ /workspace/ldtt/ref-connectors/ldtt-ref-mav-observer/.venv/bin/python -m ldtt_ref_mav_observer --manifest /workspace/ldtt/ref-connectors/ldtt-ref-mav-observer/ldtt.yaml --connection tcp:127.0.0.1:5760 --revocation-list /workspace/ldtt/ref-connectors/ldtt-ref-mav-observer/placeholders/revocations/revocations.json --cosign-key /workspace/ldtt/ref-connectors/ldtt-ref-mav-observer/placeholders/keys/ldtt-placeholder.pub --audit-path /workspace/ldtt/ref-connectors/ldtt-ref-mav-observer/evidence/e5-real-sitl-audit.jsonl --max-messages 300 --wait-heartbeat-s 30 --heartbeat-hz 1 --wire-capture /workspace/ldtt/ref-connectors/ldtt-ref-mav-observer/evidence/e8-real-sitl-wire-capture.json
+ldtt.yaml validates against schema (E1 path)
+revocation check: ok (cosign=verified_local_key)
+Connected (tcp:127.0.0.1:5760).
+Vehicle HEARTBEAT sysid=1 compid=0 type=2 autopilot=3
+Setting up streams (Observe read cmds only: REQUEST_MESSAGE / SET_MESSAGE_INTERVAL)...
+TX locked out: REQUEST_DATA_STREAM, LOG_REQUEST_* (Phase 2 creator locks)
+Local display only — Ctrl+C to stop. No egress.
+HEARTBEAT type=2 autopilot=3 base_mode=81
+SYS_STATUS voltage_battery=12600 current_battery=0
+HEARTBEAT type=2 autopilot=3 base_mode=81
+ATTITUDE roll=0.001 pitch=0.001 yaw=-0.084
+GLOBAL_POSITION_INT lat=-35.363261 lon=149.165230 alt_m=584.1
+SYS_STATUS voltage_battery=12600 current_battery=0
+BATTERY_STATUS voltages[0]=12600 remaining=100
+HEARTBEAT type=2 autopilot=3 base_mode=81
+SYS_STATUS voltage_battery=12600 current_battery=0
+HEARTBEAT type=2 autopilot=3 base_mode=81
+ATTITUDE roll=0.001 pitch=0.001 yaw=-0.084
+GLOBAL_POSITION_INT lat=-35.363261 lon=149.165230 alt_m=584.1
+SYS_STATUS voltage_battery=12600 current_battery=0
+BATTERY_STATUS voltages[0]=12600 remaining=100
+HEARTBEAT type=2 autopilot=3 base_mode=81
+ATTITUDE roll=0.001 pitch=0.001 yaw=-0.084
+GLOBAL_POSITION_INT lat=-35.363261 lon=149.165230 alt_m=584.1
+SYS_STATUS voltage_battery=12600 current_battery=0
+BATTERY_STATUS voltages[0]=12600 remaining=100
+HEARTBEAT type=2 autopilot=3 base_mode=81
+ATTITUDE roll=0.001 pitch=0.001 yaw=-0.084
+GLOBAL_POSITION_INT lat=-35.363261 lon=149.165230 alt_m=584.1
+SYS_STATUS voltage_battery=12600 current_battery=0
+BATTERY_STATUS voltages[0]=12600 remaining=100
+HEARTBEAT type=2 autopilot=3 base_mode=81
+ATTITUDE roll=0.001 pitch=0.001 yaw=-0.084
+GLOBAL_POSITION_INT lat=-35.363261 lon=149.165230 alt_m=584.1
+SYS_STATUS voltage_battery=12600 current_battery=0
+BATTERY_STATUS voltages[0]=12600 remaining=100
+HEARTBEAT type=2 autopilot=3 base_mode=81
+ATTITUDE roll=0.001 pitch=0.001 yaw=-0.084
+GLOBAL_POSITION_INT lat=-35.363261 lon=149.165230 alt_m=584.1
+SYS_STATUS voltage_battery=12600 current_battery=0
+BATTERY_STATUS voltages[0]=12600 remaining=100
+HEARTBEAT type=2 autopilot=3 base_mode=81
+ATTITUDE roll=0.001 pitch=0.001 yaw=-0.085
+GLOBAL_POSITION_INT lat=-35.363261 lon=149.165230 alt_m=584.1
+SYS_STATUS voltage_battery=12600 current_battery=0
+BATTERY_STATUS voltages[0]=12600 remaining=100
+HEARTBEAT type=2 autopilot=3 base_mode=81
+ATTITUDE roll=0.001 pitch=0.001 yaw=-0.085
+GLOBAL_POSITION_INT lat=-35.363261 lon=149.165230 alt_m=584.1
+SYS_STATUS voltage_battery=12600 current_battery=0
+BATTERY_STATUS voltages[0]=12600 remaining=100
+HEARTBEAT type=2 autopilot=3 base_mode=81
+ATTITUDE roll=0.001 pitch=0.001 yaw=-0.085
+GLOBAL_POSITION_INT lat=-35.363261 lon=149.165230 alt_m=584.1
+SYS_STATUS voltage_battery=12600 current_battery=0
+BATTERY_STATUS voltages[0]=12600 remaining=100
+HEARTBEAT type=2 autopilot=3 base_mode=81
+ATTITUDE roll=0.001 pitch=0.001 yaw=-0.085
+GLOBAL_POSITION_INT lat=-35.363261 lon=149.165230 alt_m=584.1
+SYS_STATUS voltage_battery=12600 current_battery=0
+BATTERY_STATUS voltages[0]=12600 remaining=100
+HEARTBEAT type=2 autopilot=3 base_mode=81
+ATTITUDE roll=0.001 pitch=0.001 yaw=-0.085
+GLOBAL_POSITION_INT lat=-35.363261 lon=149.165230 alt_m=584.1
+SYS_STATUS voltage_battery=12600 current_battery=0
+BATTERY_STATUS voltages[0]=12600 remaining=100
+HEARTBEAT type=2 autopilot=3 base_mode=81
+ATTITUDE roll=0.001 pitch=0.001 yaw=-0.085
+GLOBAL_POSITION_INT lat=-35.363261 lon=149.165230 alt_m=584.1
+SYS_STATUS voltage_battery=12600 current_battery=0
+BATTERY_STATUS voltages[0]=12600 remaining=100
+HEARTBEAT type=2 autopilot=3 base_mode=81
+ATTITUDE roll=0.001 pitch=0.001 yaw=-0.085
+GLOBAL_POSITION_INT lat=-35.363261 lon=149.165230 alt_m=584.1
+SYS_STATUS voltage_battery=12600 current_battery=0
+BATTERY_STATUS voltages[0]=12600 remaining=100
+HEARTBEAT type=2 autopilot=3 base_mode=81
+ATTITUDE roll=0.001 pitch=0.001 yaw=-0.085
+GLOBAL_POSITION_INT lat=-35.363261 lon=149.165230 alt_m=584.1
+SYS_STATUS voltage_battery=12600 current_battery=0
+BATTERY_STATUS voltages[0]=12600 remaining=100
+HEARTBEAT type=2 autopilot=3 base_mode=81
+ATTITUDE roll=0.001 pitch=0.001 yaw=-0.085
+GLOBAL_POSITION_INT lat=-35.363261 lon=149.165230 alt_m=584.1
+SYS_STATUS voltage_battery=12600 current_battery=0
+BATTERY_STATUS voltages[0]=12600 remaining=100
+HEARTBEAT type=2 autopilot=3 base_mode=81
+ATTITUDE roll=0.001 pitch=0.001 yaw=-0.085
+GLOBAL_POSITION_INT lat=-35.363261 lon=149.165230 alt_m=584.1
+SYS_STATUS voltage_battery=12600 current_battery=0
+BATTERY_STATUS voltages[0]=12600 remaining=100
+HEARTBEAT type=2 autopilot=3 base_mode=81
+ATTITUDE roll=0.001 pitch=0.001 yaw=-0.085
+GLOBAL_POSITION_INT lat=-35.363261 lon=149.165230 alt_m=584.1
+SYS_STATUS voltage_battery=12600 current_battery=0
+BATTERY_STATUS voltages[0]=12600 remaining=100
+HEARTBEAT type=2 autopilot=3 base_mode=81
+ATTITUDE roll=0.001 pitch=0.001 yaw=-0.085
+GLOBAL_POSITION_INT lat=-35.363261 lon=149.165230 alt_m=584.1
+SYS_STATUS voltage_battery=12600 current_battery=0
+BATTERY_STATUS voltages[0]=12600 remaining=100
+HEARTBEAT type=2 autopilot=3 base_mode=81
+ATTITUDE roll=0.001 pitch=0.001 yaw=-0.085
+GLOBAL_POSITION_INT lat=-35.363261 lon=149.165230 alt_m=584.1
+SYS_STATUS voltage_battery=12600 current_battery=0
+BATTERY_STATUS voltages[0]=12600 remaining=100
+HEARTBEAT type=2 autopilot=3 base_mode=81
+ATTITUDE roll=0.001 pitch=0.001 yaw=-0.086
+GLOBAL_POSITION_INT lat=-35.363261 lon=149.165230 alt_m=584.1
+SYS_STATUS voltage_battery=12600 current_battery=0
+BATTERY_STATUS voltages[0]=12600 remaining=100
+HEARTBEAT type=2 autopilot=3 base_mode=81
+ATTITUDE roll=0.001 pitch=0.001 yaw=-0.086
+GLOBAL_POSITION_INT lat=-35.363261 lon=149.165230 alt_m=584.1
+SYS_STATUS voltage_battery=12600 current_battery=0
+BATTERY_STATUS voltages[0]=12600 remaining=100
+HEARTBEAT type=2 autopilot=3 base_mode=81
+ATTITUDE roll=0.001 pitch=0.001 yaw=-0.086
+GLOBAL_POSITION_INT lat=-35.363261 lon=149.165230 alt_m=584.1
+SYS_STATUS voltage_battery=12600 current_battery=0
+BATTERY_STATUS voltages[0]=12600 remaining=100
+HEARTBEAT type=2 autopilot=3 base_mode=81
+ATTITUDE roll=0.001 pitch=0.001 yaw=-0.086
+GLOBAL_POSITION_INT lat=-35.363261 lon=149.165230 alt_m=584.1
+SYS_STATUS voltage_battery=12600 current_battery=0
+BATTERY_STATUS voltages[0]=12600 remaining=100
+HEARTBEAT type=2 autopilot=3 base_mode=81
+ATTITUDE roll=0.001 pitch=0.001 yaw=-0.086
+GLOBAL_POSITION_INT lat=-35.363261 lon=149.165230 alt_m=584.1
+SYS_STATUS voltage_battery=12600 current_battery=0
+BATTERY_STATUS voltages[0]=12600 remaining=100
+HEARTBEAT type=2 autopilot=3 base_mode=81
+ATTITUDE roll=0.001 pitch=0.001 yaw=-0.086
+GLOBAL_POSITION_INT lat=-35.363261 lon=149.165230 alt_m=584.1
+SYS_STATUS voltage_battery=12600 current_battery=0
+BATTERY_STATUS voltages[0]=12600 remaining=100
+HEARTBEAT type=2 autopilot=3 base_mode=81
+ATTITUDE roll=0.001 pitch=0.001 yaw=-0.086
+GLOBAL_POSITION_INT lat=-35.363261 lon=149.165230 alt_m=584.1
+SYS_STATUS voltage_battery=12600 current_battery=0
+BATTERY_STATUS voltages[0]=12600 remaining=100
+HEARTBEAT type=2 autopilot=3 base_mode=81
+ATTITUDE roll=0.001 pitch=0.001 yaw=-0.086
+GLOBAL_POSITION_INT lat=-35.363261 lon=149.165230 alt_m=584.1
+SYS_STATUS voltage_battery=12600 current_battery=0
+BATTERY_STATUS voltages[0]=12600 remaining=100
+HEARTBEAT type=2 autopilot=3 base_mode=81
+ATTITUDE roll=0.001 pitch=0.001 yaw=-0.086
+GLOBAL_POSITION_INT lat=-35.363261 lon=149.165230 alt_m=584.1
+SYS_STATUS voltage_battery=12600 current_battery=0
+BATTERY_STATUS voltages[0]=12600 remaining=100
+HEARTBEAT type=2 autopilot=3 base_mode=81
+ATTITUDE roll=0.001 pitch=0.001 yaw=-0.086
+GLOBAL_POSITION_INT lat=-35.363261 lon=149.165230 alt_m=584.1
+SYS_STATUS voltage_battery=12600 current_battery=0
+BATTERY_STATUS voltages[0]=12600 remaining=100
+HEARTBEAT type=2 autopilot=3 base_mode=81
+ATTITUDE roll=0.001 pitch=0.001 yaw=-0.086
+GLOBAL_POSITION_INT lat=-35.363261 lon=149.165230 alt_m=584.1
+SYS_STATUS voltage_battery=12600 current_battery=0
+BATTERY_STATUS voltages[0]=12600 remaining=100
+HEARTBEAT type=2 autopilot=3 base_mode=81
+ATTITUDE roll=0.001 pitch=0.001 yaw=-0.086
+GLOBAL_POSITION_INT lat=-35.363261 lon=149.165230 alt_m=584.1
+SYS_STATUS voltage_battery=12600 current_battery=0
+BATTERY_STATUS voltages[0]=12600 remaining=100
+HEARTBEAT type=2 autopilot=3 base_mode=81
+ATTITUDE roll=0.001 pitch=0.001 yaw=-0.086
+GLOBAL_POSITION_INT lat=-35.363261 lon=149.165230 alt_m=584.1
+SYS_STATUS voltage_battery=12600 current_battery=0
+BATTERY_STATUS voltages[0]=12600 remaining=100
+HEARTBEAT type=2 autopilot=3 base_mode=81
+ATTITUDE roll=0.001 pitch=0.001 yaw=-0.086
+GLOBAL_POSITION_INT lat=-35.363261 lon=149.165230 alt_m=584.1
+SYS_STATUS voltage_battery=12600 current_battery=0
+BATTERY_STATUS voltages[0]=12600 remaining=100
+HEARTBEAT type=2 autopilot=3 base_mode=81
+ATTITUDE roll=0.001 pitch=0.001 yaw=-0.086
+GLOBAL_POSITION_INT lat=-35.363261 lon=149.165230 alt_m=584.1
+SYS_STATUS voltage_battery=12600 current_battery=0
+BATTERY_STATUS voltages[0]=12600 remaining=100
+HEARTBEAT type=2 autopilot=3 base_mode=81
+ATTITUDE roll=0.001 pitch=0.001 yaw=-0.087
+GLOBAL_POSITION_INT lat=-35.363261 lon=149.165230 alt_m=584.1
+SYS_STATUS voltage_battery=12600 current_battery=0
+BATTERY_STATUS voltages[0]=12600 remaining=100
+HEARTBEAT type=2 autopilot=3 base_mode=81
+ATTITUDE roll=0.001 pitch=0.001 yaw=-0.087
+GLOBAL_POSITION_INT lat=-35.363261 lon=149.165230 alt_m=584.1
+SYS_STATUS voltage_battery=12600 current_battery=0
+BATTERY_STATUS voltages[0]=12600 remaining=100
+HEARTBEAT type=2 autopilot=3 base_mode=81
+ATTITUDE roll=0.001 pitch=0.001 yaw=-0.087
+GLOBAL_POSITION_INT lat=-35.363261 lon=149.165230 alt_m=584.1
+SYS_STATUS voltage_battery=12600 current_battery=0
+BATTERY_STATUS voltages[0]=12600 remaining=100
+HEARTBEAT type=2 autopilot=3 base_mode=81
+ATTITUDE roll=0.001 pitch=0.001 yaw=-0.087
+GLOBAL_POSITION_INT lat=-35.363261 lon=149.165230 alt_m=584.1
+SYS_STATUS voltage_battery=12600 current_battery=0
+BATTERY_STATUS voltages[0]=12600 remaining=100
+HEARTBEAT type=2 autopilot=3 base_mode=81
+ATTITUDE roll=0.001 pitch=0.001 yaw=-0.087
+GLOBAL_POSITION_INT lat=-35.363261 lon=149.165230 alt_m=584.1
+SYS_STATUS voltage_battery=12600 current_battery=0
+BATTERY_STATUS voltages[0]=12600 remaining=100
+HEARTBEAT type=2 autopilot=3 base_mode=81
+ATTITUDE roll=0.001 pitch=0.001 yaw=-0.087
+GLOBAL_POSITION_INT lat=-35.363261 lon=149.165230 alt_m=584.1
+SYS_STATUS voltage_battery=12600 current_battery=0
+BATTERY_STATUS voltages[0]=12600 remaining=100
+HEARTBEAT type=2 autopilot=3 base_mode=81
+ATTITUDE roll=0.001 pitch=0.001 yaw=-0.087
+GLOBAL_POSITION_INT lat=-35.363261 lon=149.165230 alt_m=584.1
+SYS_STATUS voltage_battery=12600 current_battery=0
+BATTERY_STATUS voltages[0]=12600 remaining=100
+HEARTBEAT type=2 autopilot=3 base_mode=81
+ATTITUDE roll=0.001 pitch=0.001 yaw=-0.087
+GLOBAL_POSITION_INT lat=-35.363261 lon=149.165230 alt_m=584.1
+SYS_STATUS voltage_battery=12600 current_battery=0
+BATTERY_STATUS voltages[0]=12600 remaining=100
+HEARTBEAT type=2 autopilot=3 base_mode=81
+ATTITUDE roll=0.001 pitch=0.001 yaw=-0.087
+GLOBAL_POSITION_INT lat=-35.363261 lon=149.165230 alt_m=584.1
+SYS_STATUS voltage_battery=12600 current_battery=0
+BATTERY_STATUS voltages[0]=12600 remaining=100
+HEARTBEAT type=2 autopilot=3 base_mode=81
+ATTITUDE roll=0.001 pitch=0.001 yaw=-0.087
+GLOBAL_POSITION_INT lat=-35.363261 lon=149.165230 alt_m=584.1
+SYS_STATUS voltage_battery=12600 current_battery=0
+BATTERY_STATUS voltages[0]=12600 remaining=100
+HEARTBEAT type=2 autopilot=3 base_mode=81
+ATTITUDE roll=0.001 pitch=0.001 yaw=-0.087
+GLOBAL_POSITION_INT lat=-35.363261 lon=149.165230 alt_m=584.1
+SYS_STATUS voltage_battery=12600 current_battery=0
+BATTERY_STATUS voltages[0]=12600 remaining=100
+HEARTBEAT type=2 autopilot=3 base_mode=81
+ATTITUDE roll=0.001 pitch=0.001 yaw=-0.087
+GLOBAL_POSITION_INT lat=-35.363261 lon=149.165230 alt_m=584.1
+SYS_STATUS voltage_battery=12600 current_battery=0
+BATTERY_STATUS voltages[0]=12600 remaining=100
+HEARTBEAT type=2 autopilot=3 base_mode=81
+ATTITUDE roll=0.001 pitch=0.001 yaw=-0.087
+GLOBAL_POSITION_INT lat=-35.363261 lon=149.165230 alt_m=584.1
+SYS_STATUS voltage_battery=12600 current_battery=0
+BATTERY_STATUS voltages[0]=12600 remaining=100
+HEARTBEAT type=2 autopilot=3 base_mode=81
+ATTITUDE roll=0.001 pitch=0.001 yaw=-0.087
+GLOBAL_POSITION_INT lat=-35.363261 lon=149.165230 alt_m=584.1
+SYS_STATUS voltage_battery=12600 current_battery=0
+BATTERY_STATUS voltages[0]=12600 remaining=100
+HEARTBEAT type=2 autopilot=3 base_mode=81
+ATTITUDE roll=0.001 pitch=0.001 yaw=-0.087
+GLOBAL_POSITION_INT lat=-35.363261 lon=149.165230 alt_m=584.1
+SYS_STATUS voltage_battery=12600 current_battery=0
+BATTERY_STATUS voltages[0]=12600 remaining=100
+HEARTBEAT type=2 autopilot=3 base_mode=81
+ATTITUDE roll=0.001 pitch=0.001 yaw=-0.087
+GLOBAL_POSITION_INT lat=-35.363261 lon=149.165230 alt_m=584.1
+SYS_STATUS voltage_battery=12600 current_battery=0
+BATTERY_STATUS voltages[0]=12600 remaining=100
+HEARTBEAT type=2 autopilot=3 base_mode=81
+ATTITUDE roll=0.001 pitch=0.001 yaw=-0.087
+GLOBAL_POSITION_INT lat=-35.363261 lon=149.165230 alt_m=584.1
+SYS_STATUS voltage_battery=12600 current_battery=0
+BATTERY_STATUS voltages[0]=12600 remaining=100
+HEARTBEAT type=2 autopilot=3 base_mode=81
+ATTITUDE roll=0.001 pitch=0.001 yaw=-0.088
+GLOBAL_POSITION_INT lat=-35.363261 lon=149.165230 alt_m=584.1
+SYS_STATUS voltage_battery=12600 current_battery=0
+BATTERY_STATUS voltages[0]=12600 remaining=100
+HEARTBEAT type=2 autopilot=3 base_mode=81
+ATTITUDE roll=0.001 pitch=0.001 yaw=-0.088
+GLOBAL_POSITION_INT lat=-35.363261 lon=149.165230 alt_m=584.1
+SYS_STATUS voltage_battery=12600 current_battery=0
+BATTERY_STATUS voltages[0]=12600 remaining=100
+HEARTBEAT type=2 autopilot=3 base_mode=81
+ATTITUDE roll=0.001 pitch=0.001 yaw=-0.088
+GLOBAL_POSITION_INT lat=-35.363261 lon=149.165230 alt_m=584.1
+SYS_STATUS voltage_battery=12600 current_battery=0
+BATTERY_STATUS voltages[0]=12600 remaining=100
+HEARTBEAT type=2 autopilot=3 base_mode=81
+ATTITUDE roll=0.001 pitch=0.001 yaw=-0.088
+GLOBAL_POSITION_INT lat=-35.363261 lon=149.165230 alt_m=584.1
+SYS_STATUS voltage_battery=12600 current_battery=0
+BATTERY_STATUS voltages[0]=12600 remaining=100
+HEARTBEAT type=2 autopilot=3 base_mode=81
+ATTITUDE roll=0.001 pitch=0.001 yaw=-0.088
+GLOBAL_POSITION_INT lat=-35.363261 lon=149.165230 alt_m=584.1
+SYS_STATUS voltage_battery=12600 current_battery=0
+BATTERY_STATUS voltages[0]=12600 remaining=100
+HEARTBEAT type=2 autopilot=3 base_mode=81
+ATTITUDE roll=0.001 pitch=0.001 yaw=-0.088
+GLOBAL_POSITION_INT lat=-35.363261 lon=149.165230 alt_m=584.1
+SYS_STATUS voltage_battery=12600 current_battery=0
+BATTERY_STATUS voltages[0]=12600 remaining=100
+HEARTBEAT type=2 autopilot=3 base_mode=81
+ATTITUDE roll=0.001 pitch=0.001 yaw=-0.088
+GLOBAL_POSITION_INT lat=-35.363261 lon=149.165230 alt_m=584.1
+SYS_STATUS voltage_battery=12600 current_battery=0
+BATTERY_STATUS voltages[0]=12600 remaining=100
+HEARTBEAT type=2 autopilot=3 base_mode=81
+ATTITUDE roll=0.001 pitch=0.001 yaw=-0.088
+GLOBAL_POSITION_INT lat=-35.363261 lon=149.165230 alt_m=584.1
+SYS_STATUS voltage_battery=12600 current_battery=0
+BATTERY_STATUS voltages[0]=12600 remaining=100
+HEARTBEAT type=2 autopilot=3 base_mode=81
+
+--- stderr ---
+
+returncode=0

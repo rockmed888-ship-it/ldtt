@@ -1,0 +1,929 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ldtt.example/schema/ldtt-0.1.4.json",
+  "title": "LDTT connector manifest (ldtt.yaml) v0.1.4",
+  "description": "Phase 1 draft. Validates the connector contract in LDTT Stamp Spec v0.1.4 \u00a74. Protected safety settings (\u00a72.1) are checked by a denylist pattern here and fully in review.",
+  "type": "object",
+  "required": [
+    "ldtt_spec",
+    "connector",
+    "build",
+    "transport",
+    "auth",
+    "level",
+    "scopes",
+    "rate_limits",
+    "privacy",
+    "audit_log",
+    "revocation",
+    "known_limitations"
+  ],
+  "additionalProperties": false,
+  "$defs": {
+    "sha256": {
+      "type": "string",
+      "pattern": "^sha256:[0-9a-f]{64}$"
+    },
+    "observeScope": {
+      "type": "string",
+      "pattern": "^observe:[a-z_]+$"
+    },
+    "anyScope": {
+      "type": "string",
+      "pattern": "^(observe|operate|command):[a-z_]+$"
+    },
+    "mavName": {
+      "type": "string",
+      "pattern": "^[A-Z0-9_]+$"
+    },
+    "protectedParam": {
+      "type": "string",
+      "pattern": "^(FENCE_ENABLE|FENCE_ACTION|GF_ACTION|ARMING_CHECK|FS_.*|BATT_FS_.*|NAV_DLL_ACT|NAV_RCL_ACT|COM_ARM_.*|DID_.*)$"
+    },
+    "cameraPayloadCmd": {
+      "type": "string",
+      "pattern": "^MAV_CMD_(IMAGE_|VIDEO_|CAMERA_|SET_CAMERA_|DO_DIGICAM_|DO_GIMBAL_MANAGER_|DO_MOUNT_|DO_SET_CAM_|STORAGE_FORMAT).*$"
+    },
+    "protectedCmd": {
+      "enum": [
+        "MAV_CMD_DO_FENCE_ENABLE",
+        "MAV_CMD_DO_SET_PARAMETER",
+        "MAV_CMD_PREFLIGHT_STORAGE"
+      ],
+      "description": "Commands that can disable a protected setting or bypass param_allowlist (spec \u00a72.1). Force-arm via MAV_CMD_COMPONENT_ARM_DISARM is checked in review (E9/E12)."
+    },
+    "readCmd": {
+      "enum": [
+        "MAV_CMD_REQUEST_MESSAGE",
+        "MAV_CMD_SET_MESSAGE_INTERVAL"
+      ]
+    },
+    "observeTx": {
+      "enum": [
+        "HEARTBEAT",
+        "REQUEST_DATA_STREAM",
+        "PARAM_REQUEST_READ",
+        "PARAM_REQUEST_LIST",
+        "MISSION_REQUEST_LIST",
+        "MISSION_REQUEST_INT",
+        "MISSION_ACK",
+        "LOG_REQUEST_LIST",
+        "LOG_REQUEST_DATA",
+        "LOG_REQUEST_END",
+        "COMMAND_LONG"
+      ]
+    },
+    "operateScope": {
+      "type": "string",
+      "pattern": "^(observe|operate):[a-z_]+$"
+    },
+    "operateTx": {
+      "description": "Operate tx allowlist (spec \u00a74). Observe read-only set plus these. Every other message is Command-only in v0.1.",
+      "anyOf": [
+        {
+          "$ref": "#/$defs/observeTx"
+        },
+        {
+          "enum": [
+            "PARAM_SET",
+            "MISSION_COUNT",
+            "MISSION_ITEM_INT",
+            "MISSION_CLEAR_ALL",
+            "MISSION_WRITE_PARTIAL_LIST",
+            "COMMAND_INT",
+            "GIMBAL_MANAGER_SET_ATTITUDE",
+            "GIMBAL_MANAGER_SET_PITCHYAW"
+          ]
+        }
+      ]
+    }
+  },
+  "properties": {
+    "ldtt_spec": {
+      "enum": [
+        "0.1.3",
+        "0.1.4"
+      ]
+    },
+    "connector": {
+      "type": "object",
+      "required": [
+        "id",
+        "name",
+        "version",
+        "publisher",
+        "security_contact",
+        "source_url",
+        "license",
+        "sbom"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-z0-9]+(\\.[a-z0-9-]+)+$"
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "version": {
+          "type": "string",
+          "pattern": "^\\d+\\.\\d+\\.\\d+([-+].+)?$"
+        },
+        "publisher": {
+          "type": "string",
+          "minLength": 1
+        },
+        "security_contact": {
+          "type": "string",
+          "minLength": 3
+        },
+        "source_url": {
+          "type": "string",
+          "pattern": "^https://"
+        },
+        "license": {
+          "type": "string",
+          "minLength": 1,
+          "description": "SPDX license identifier or expression"
+        },
+        "sbom": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "build": {
+      "type": "object",
+      "required": [
+        "artifact_digest",
+        "signature",
+        "provenance",
+        "source_commit"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "artifact_digest": {
+          "$ref": "#/$defs/sha256"
+        },
+        "signature": {
+          "type": "string",
+          "minLength": 1
+        },
+        "provenance": {
+          "type": "string",
+          "minLength": 1
+        },
+        "source_commit": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{7,64}$"
+        }
+      }
+    },
+    "transport": {
+      "type": "object",
+      "required": [
+        "kind"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "enum": [
+            "mavlink2",
+            "mcp"
+          ]
+        },
+        "mavlink": {
+          "type": "object",
+          "required": [
+            "signing",
+            "rx_allowlist",
+            "tx_allowlist",
+            "command_allowlist"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "signing": {
+              "type": "boolean"
+            },
+            "rx_allowlist": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/mavName"
+              },
+              "uniqueItems": true
+            },
+            "tx_allowlist": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/mavName"
+              },
+              "uniqueItems": true
+            },
+            "command_allowlist": {
+              "type": "array",
+              "items": {
+                "allOf": [
+                  {
+                    "type": "string",
+                    "pattern": "^MAV_CMD_[A-Z0-9_]+$"
+                  },
+                  {
+                    "not": {
+                      "$ref": "#/$defs/protectedCmd"
+                    }
+                  }
+                ]
+              },
+              "uniqueItems": true
+            },
+            "param_allowlist": {
+              "type": "array",
+              "uniqueItems": true,
+              "items": {
+                "allOf": [
+                  {
+                    "type": "string",
+                    "pattern": "^[A-Z0-9_]+$"
+                  },
+                  {
+                    "not": {
+                      "$ref": "#/$defs/protectedParam"
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "mcp": {
+          "type": "object",
+          "required": [
+            "tools"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "tools": {
+              "type": "array",
+              "minItems": 1,
+              "items": {
+                "type": "object",
+                "required": [
+                  "name",
+                  "scope",
+                  "writes"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "scope": {
+                    "$ref": "#/$defs/anyScope"
+                  },
+                  "writes": {
+                    "type": "boolean"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "kind": {
+                "const": "mavlink2"
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "mavlink"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "kind": {
+                "const": "mcp"
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "mcp"
+            ]
+          }
+        }
+      ]
+    },
+    "auth": {
+      "type": "object",
+      "required": [
+        "method",
+        "token_storage",
+        "session_ttl_s"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "method": {
+          "enum": [
+            "local-only",
+            "token",
+            "oauth2",
+            "mtls"
+          ]
+        },
+        "token_storage": {
+          "type": "string",
+          "not": {
+            "enum": [
+              "plaintext",
+              "config"
+            ]
+          }
+        },
+        "session_ttl_s": {
+          "type": "integer",
+          "minimum": 1
+        }
+      }
+    },
+    "level": {
+      "enum": [
+        "observe",
+        "operate",
+        "command"
+      ]
+    },
+    "scopes": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "$ref": "#/$defs/anyScope"
+      }
+    },
+    "heartbeat": {
+      "type": "object",
+      "required": [
+        "interval_s",
+        "timeout_s",
+        "on_timeout"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "interval_s": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "timeout_s": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "on_timeout": {
+          "const": "halt_writes"
+        }
+      }
+    },
+    "rate_limits": {
+      "type": "object",
+      "required": [
+        "reads_per_s"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "reads_per_s": {
+          "type": "number",
+          "minimum": 0
+        },
+        "writes_per_min": {
+          "type": "number",
+          "minimum": 0
+        },
+        "commands_per_min": {
+          "type": "number",
+          "minimum": 0
+        }
+      }
+    },
+    "privacy": {
+      "type": "object",
+      "required": [
+        "collects",
+        "personal_data",
+        "egress",
+        "retention_days"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "collects": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "uniqueItems": true
+        },
+        "personal_data": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "uniqueItems": true
+        },
+        "egress": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "destination",
+              "data",
+              "purpose"
+            ],
+            "additionalProperties": false,
+            "properties": {
+              "destination": {
+                "type": "string",
+                "minLength": 1
+              },
+              "data": {
+                "type": "array",
+                "minItems": 1,
+                "items": {
+                  "type": "string"
+                }
+              },
+              "purpose": {
+                "type": "string",
+                "minLength": 1
+              }
+            }
+          }
+        },
+        "egress_runtime_opt_in": {
+          "type": "boolean"
+        },
+        "retention_days": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "if": {
+        "properties": {
+          "egress": {
+            "minItems": 1
+          }
+        }
+      },
+      "then": {
+        "required": [
+          "egress_runtime_opt_in"
+        ],
+        "properties": {
+          "egress_runtime_opt_in": {
+            "const": true
+          }
+        }
+      }
+    },
+    "audit_log": {
+      "type": "object",
+      "required": [
+        "format",
+        "path",
+        "includes"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "format": {
+          "type": "string"
+        },
+        "path": {
+          "type": "string"
+        },
+        "includes": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "enum": [
+              "session",
+              "scope_grant",
+              "egress_opt_in",
+              "revocation_check",
+              "write",
+              "command",
+              "confirmation",
+              "result"
+            ]
+          },
+          "allOf": [
+            {
+              "contains": {
+                "const": "session"
+              }
+            },
+            {
+              "contains": {
+                "const": "scope_grant"
+              }
+            },
+            {
+              "contains": {
+                "const": "egress_opt_in"
+              }
+            },
+            {
+              "contains": {
+                "const": "revocation_check"
+              }
+            }
+          ]
+        }
+      }
+    },
+    "revocation": {
+      "type": "object",
+      "required": [
+        "list_url",
+        "check_interval_s",
+        "max_staleness_s"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "list_url": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Where to fetch the signed revocation list: https:// URL, file: URI, or relative path (offline copy). Signature and staleness rules (C4) apply regardless of source.",
+          "anyOf": [
+            {
+              "pattern": "^https://"
+            },
+            {
+              "pattern": "^file:"
+            },
+            {
+              "pattern": "^(?![A-Za-z][A-Za-z0-9+.-]*:)(?!/)\\S+$"
+            }
+          ]
+        },
+        "check_interval_s": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "max_staleness_s": {
+          "type": "integer",
+          "minimum": 1
+        }
+      }
+    },
+    "operator_confirmation": {
+      "type": "object",
+      "required": [
+        "required_for",
+        "ui"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "required_for": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string"
+          }
+        },
+        "ui": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "known_limitations": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "control",
+          "note"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "control": {
+            "type": "string",
+            "pattern": "^C[1-9]$"
+          },
+          "note": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "level": {
+            "const": "observe"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "scopes": {
+            "items": {
+              "$ref": "#/$defs/observeScope"
+            }
+          },
+          "transport": {
+            "properties": {
+              "mavlink": {
+                "properties": {
+                  "tx_allowlist": {
+                    "items": {
+                      "$ref": "#/$defs/observeTx"
+                    }
+                  },
+                  "command_allowlist": {
+                    "items": {
+                      "$ref": "#/$defs/readCmd"
+                    }
+                  }
+                },
+                "not": {
+                  "required": [
+                    "param_allowlist"
+                  ]
+                }
+              },
+              "mcp": {
+                "properties": {
+                  "tools": {
+                    "items": {
+                      "properties": {
+                        "scope": {
+                          "$ref": "#/$defs/observeScope"
+                        },
+                        "writes": {
+                          "const": false
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "rate_limits": {
+            "properties": {
+              "writes_per_min": {
+                "const": 0
+              },
+              "commands_per_min": {
+                "const": 0
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "level": {
+            "enum": [
+              "operate",
+              "command"
+            ]
+          }
+        }
+      },
+      "then": {
+        "required": [
+          "heartbeat",
+          "operator_confirmation"
+        ],
+        "properties": {
+          "audit_log": {
+            "properties": {
+              "includes": {
+                "allOf": [
+                  {
+                    "contains": {
+                      "const": "write"
+                    }
+                  },
+                  {
+                    "contains": {
+                      "const": "confirmation"
+                    }
+                  },
+                  {
+                    "contains": {
+                      "const": "result"
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "level": {
+            "const": "operate"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "scopes": {
+            "items": {
+              "$ref": "#/$defs/operateScope"
+            },
+            "contains": {
+              "pattern": "^operate:"
+            }
+          },
+          "transport": {
+            "properties": {
+              "mavlink": {
+                "properties": {
+                  "tx_allowlist": {
+                    "items": {
+                      "$ref": "#/$defs/operateTx"
+                    }
+                  },
+                  "command_allowlist": {
+                    "items": {
+                      "anyOf": [
+                        {
+                          "$ref": "#/$defs/cameraPayloadCmd"
+                        },
+                        {
+                          "$ref": "#/$defs/readCmd"
+                        }
+                      ]
+                    }
+                  }
+                }
+              },
+              "mcp": {
+                "properties": {
+                  "tools": {
+                    "items": {
+                      "properties": {
+                        "scope": {
+                          "$ref": "#/$defs/operateScope"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "level": {
+            "const": "command"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "scopes": {
+            "contains": {
+              "pattern": "^command:"
+            }
+          },
+          "audit_log": {
+            "properties": {
+              "includes": {
+                "contains": {
+                  "const": "command"
+                }
+              }
+            }
+          }
+        },
+        "anyOf": [
+          {
+            "properties": {
+              "transport": {
+                "properties": {
+                  "mavlink": {
+                    "properties": {
+                      "signing": {
+                        "const": true
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          {
+            "properties": {
+              "known_limitations": {
+                "contains": {
+                  "properties": {
+                    "control": {
+                      "const": "C9"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "scopes": {
+            "contains": {
+              "const": "operate:params"
+            }
+          }
+        },
+        "required": [
+          "scopes"
+        ]
+      },
+      "then": {
+        "properties": {
+          "transport": {
+            "properties": {
+              "mavlink": {
+                "required": [
+                  "param_allowlist"
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "transport": {
+            "properties": {
+              "mavlink": {
+                "properties": {
+                  "tx_allowlist": {
+                    "contains": {
+                      "const": "PARAM_SET"
+                    }
+                  }
+                },
+                "required": [
+                  "tx_allowlist"
+                ]
+              }
+            },
+            "required": [
+              "mavlink"
+            ]
+          }
+        },
+        "required": [
+          "transport"
+        ]
+      },
+      "then": {
+        "properties": {
+          "scopes": {
+            "contains": {
+              "const": "operate:params"
+            }
+          },
+          "transport": {
+            "properties": {
+              "mavlink": {
+                "required": [
+                  "param_allowlist"
+                ]
+              }
+            }
+          }
+        }
+      }
+    }
+  ]
+}
