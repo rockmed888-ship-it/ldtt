@@ -3,7 +3,7 @@ __pycache__/
 *.py[cod]
 .pytest_cache/
 *.egg-info/
-dist/*.whl
+dist/provenance.predicate.json
 .ldtt-cache/
 placeholders/keys/*.key
 tools/cosign

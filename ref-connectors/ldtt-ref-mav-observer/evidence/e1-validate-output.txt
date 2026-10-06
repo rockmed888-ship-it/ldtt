@@ -1,1 +1,1 @@
-VALID: ldtt.yaml passes schema/ldtt.schema.json
+VALID: ldtt.yaml (ldtt_spec 0.1.4) passes schema/ldtt.schema.json

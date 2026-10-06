@@ -27,7 +27,7 @@ Fulcio Bundle JSON). Cosign CLI is optional fallback only.
 
 ## Public repo (live Spec §5 copies)
 
-https://github.com/dustindent9-cmyk/ldtt
+https://github.com/rockmed888-ship-it/ldtt
 
 ```
 revocations/revocations.json
@@ -38,7 +38,7 @@ stamps/org.ldtt.ref-mav-observer/0.1.0.json.sigstore.json
 
 When creator flips production URL:
 
-`https://raw.githubusercontent.com/dustindent9-cmyk/ldtt/main/revocations/revocations.json`
+`https://raw.githubusercontent.com/rockmed888-ship-it/ldtt/main/revocations/revocations.json`
 
 Re-sign with **cosign keyless** from Actions after merge; never publish the private key.
 

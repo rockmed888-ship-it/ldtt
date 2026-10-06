@@ -15,7 +15,7 @@
 - Read-only MAVLink 2 telemetry observer stamped at Observe.
 - Enforce C4 (revocation + cosign when available), C5 (audit log), C6 (rate limits) in-process.
 - Local display only (CLI); no egress; retention_days 0.
-- Public git https://github.com/dustindent9-cmyk/ldtt + free CI + in-process verify + cosign keyless path.
+- Public git https://github.com/rockmed888-ship-it/ldtt + free CI + in-process verify + cosign keyless path.
 
 **Non-goals (Phase 2)**
 - Operate/Command levels, MCP transport, vendor APIs, live flight, DJI reverse engineering.
@@ -91,11 +91,12 @@ Startup / interval:
 
 ### C4 Revocation + cosign (Corrector A1)
 1. On startup (and every `check_interval_s`), fetch list + sibling `.sigstore.json`.
-2. **list_url (v0.1.4):** relative path `placeholders/revocations/revocations.json` (N2). Public HTTPS also live: `https://raw.githubusercontent.com/dustindent9-cmyk/ldtt/main/revocations/revocations.json`.
+2. **list_url (v0.1.4):** relative path `placeholders/revocations/revocations.json` (N2). Public HTTPS also live: `https://raw.githubusercontent.com/rockmed888-ship-it/ldtt/main/revocations/revocations.json`.
 3. **Verify in-process:** cryptography ECDSA for local-key cosign bundles; sigstore-python for Fulcio Bundle JSON; cosign CLI optional fallback. Default key: `placeholders/keys/ldtt-placeholder.pub`.
 4. **Never load unsigned lists.** Missing/failed verify = unreachable: keep last verified list until `max_staleness_s`, then fail closed (warn + refuse sessions / halt). No C4 known_limitation waiver.
 5. **Disk cache (A1-r):** `save_cache` writes **original body bytes** + sibling `.sigstore.json` (no re-`json.dumps`). `load_cache` re-runs `verify_fn` and ignores cache on verify failure; also applies `list_version` rollback. Tampered cache → treat as no cache → fail closed when list unreachable.
 6. **Rollback / staleness / revoked:** fail closed (Observe: warn + halt; no egress to stop).
+7. **N3 dev-only flags (`dev_flags.py`):** `--skip-revoke` / `--no-interval-check` are accepted only with env `LDTT_DEV=1` (exact). Otherwise: exit 2 + audit `refuse` (`reason: dev_only_flag_without_dev_mode`), no session started. With `LDTT_DEV=1`: stderr WARN; `session start` carries `dev_mode: true, evidence_eligible: false`; audit `revocation_check` `outcome: skipped_dev` (startup) and/or `interval_skipped_dev` (interval; implied by `--skip-revoke`). Chosen over stripping flags from release builds because one wheel = one digest (C3). `scripts/check_evidence_no_dev_flags.py` (CI + `tests/test_n3_dev_flags.py`) fails if any in-tree evidence contains skip outcomes / dev_mode / the flags; pre-N3 evidence moved to `evidence/superseded-dev-flags/`.
 
 ### C5 Audit log
 JSONL at `audit_log.path` (or `--audit-path`). **Creator lock #3:** `audit_log.includes` (`session`, `scope_grant`, `egress_opt_in`, `revocation_check`) is the **minimum** set the connector must emit — not a filter. `refuse` (TX allowlist / rate refuse) and `deny` (policy deny, e.g. revocation fail-closed) are evidence-positive and are **always** writable even though they are not in the schema `includes` enum (`ALWAYS_ALLOWED_EVENTS`). The writer never drops an event for being absent from `includes`; `AuditLog.missing_required()` reports minimum-set events not yet written. Tests: `tests/test_audit_refuse.py`.
@@ -110,9 +111,9 @@ Token bucket on outbound requests at `reads_per_s` (capacity = refill = reads_pe
 | ID | Test | How | Maps to |
 |---|---|---|---|
 | T1–T7 | Unit allowlist / rate / revocation | pytest | E6–E8 |
-| T8 | **Real SITL smoke** | `scripts/real_sitl_smoke.py` — official ArduPilot prebuilt ArduCopter SITL (V4.7.1, `firmware.ardupilot.org/Copter/stable/SITL_x86_64_linux_gnu/`) on `tcp:127.0.0.1:5760`, no Docker. Phase A: observer CLI + wire capture. Phase B: negative TX on the same real link. 16 machine-checked criteria. | E8 |
+| T8 | **Real SITL smoke** | `scripts/real_sitl_smoke.py` — official ArduPilot prebuilt ArduCopter SITL (V4.7.1, `firmware.ardupilot.org/Copter/stable/SITL_x86_64_linux_gnu/`) on `tcp:127.0.0.1:5760`, no Docker. Phase A: observer CLI + wire capture. Phase B: negative TX on the same real link. 17 machine-checked criteria (incl. `no_dev_only_flags_n3`); re-run post-N3 **without** `--no-interval-check`. | E8 |
 | T8b | Fake-peer smoke | `scripts/sitl_smoke.py` — pymavlink UDP HEARTBEAT peer. **Interim E8 only, never SITL PASS.** | E8 (interim) |
-| T8c | dronekit-sitl copter-3.3 | Supplemental only: HEARTBEAT RX OK but 3.3 predates REQUEST_MESSAGE/SET_MESSAGE_INTERVAL → no stream ACK/telemetry; cannot meet criteria (`evidence/supplemental-dronekit-copter33/`) | info |
+| T8c | dronekit-sitl copter-3.3 | Supplemental only: HEARTBEAT RX OK but 3.3 predates REQUEST_MESSAGE/SET_MESSAGE_INTERVAL → no stream ACK/telemetry; cannot meet criteria (`evidence/superseded-dev-flags/supplemental-dronekit-copter33/` — superseded: produced with `--no-interval-check`) | info |
 | T9 | Schema | `ldtt.yaml` vs schema | E1 |
 | T10 | Cosign | Local key verify placeholders; CI keyless | DoD #5 |
 
@@ -122,9 +123,10 @@ Token bucket on outbound requests at `reads_per_s` (capacity = refill = reads_pe
 
 | Piece | Free choice |
 |---|---|
-| CI | `.github/workflows/ci.yml` — pytest, schema validate, cosign keyless sign/verify |
-| Sign | cosign keyless in Actions; local placeholder key for offline DoD #5 |
-| Placeholders | `placeholders/` until public HTTPS publish |
+| CI | Repo-root `.github/workflows/ldtt-ref-mav-observer-ci.yml` (copy in `ci/`): pytest, schema, N3 evidence gate, in-process list/stamp verify; reproducible wheel + digest == `ldtt.yaml`; cosign keyless sign; `actions/attest-build-provenance` (SLSA v1, Sigstore); real SITL. **Not yet active** — gh token lacks `workflow` scope. |
+| Build | `scripts/build_release.sh`: wheel only (sdist not reproducible), `SOURCE_DATE_EPOCH=1791244800`, pinned setuptools 84.0.0 / wheel 0.48.0; package readme = `README-pkg.md` so doc edits don't move the digest. Same digest on Py 3.12 + 3.13 and from a clean `git archive` of the public commit. |
+| Sign | `scripts/sign_release.sh`: cosign `sign-blob` (placeholder key, Rekor-logged) → `dist/ldtt-ref-mav-observer.sigstore.json`; `attest-blob --type slsaprovenance1` → statement `dist/provenance.intoto.jsonl` + DSSE bundle `dist/provenance.intoto.sigstore.json`. Keyless + GitHub attestation = CI path. |
+| Placeholders | `placeholders/` (copies of repo-root `revocations/`, `stamps/`) |
 
 ---
 
@@ -136,14 +138,14 @@ Token bucket on outbound requests at `reads_per_s` (capacity = refill = reads_pe
 | 2 | **REQUEST_DATA_STREAM** | **LOCKED:** REMOVED from ref connector `tx_allowlist` and enforcement (`LOCKED_OUT_TX`). Stream setup = REQUEST_MESSAGE + SET_MESSAGE_INTERVAL only (F8 / PX4-friendly). Schema may still list it for other connectors. |
 | 3 | **HEARTBEAT as TX / rate** | **LOCKED (#2):** HEARTBEAT TX exempt from `reads_per_s` (keepalive, not a read). Still allowlist-gated. |
 | 4 | **Audit of refused TX** | **LOCKED (#3):** `includes` = minimum set; `refuse`/`deny` always writable (evidence-positive). |
-| 5 | **Revocation list_url** | **N2 DONE:** schema v0.1.4 relative path in `ldtt.yaml`. Public repo Spec §5 paths published on dustindent9-cmyk/ldtt. |
+| 5 | **Revocation list_url** | **N2 DONE:** schema v0.1.4 relative path in `ldtt.yaml`. Public repo Spec §5 paths published on rockmed888-ship-it/ldtt. |
 | 6 | **P4** | **LOCKED:** FLIGHTTERMINATION / REBOOT_SHUTDOWN / MOTOR_TEST = **Command** now; protect in **v0.2**. Geofence geometry upload OK at Operate; fence enable/disable barred. No schema change yet. |
 | 7 | **Operate tx widening** | **LOCKED:** NO in Phase 2. Candidates in mapping draft only. |
 | 8 | **Protected-settings** | Widen in **draft list** (`FENCE_*`, `GF_*`, `CBRK_*`, etc.). No schema bump unless asked. |
 | 9 | LGPL pymavlink | Document in SBOM (draft `sbom.spdx.json`). |
 | 10 | **LOG_REQUEST_*** | **LOCKED:** omitted from tx_allowlist + enforcement (scopes `observe:telemetry` only). |
 
-Remaining open: C3 real signed release artifact + provenance; optional flip of `list_url` to public HTTPS; keyless re-sign of published blobs via CI. Fake-peer smoke stays interim E8 only — never relabeled SITL PASS. **N1:** `--heartbeat-hz` ≤ 2.
+Remaining open: C3 issuer/keyless signing + CI-built provenance (local draft done: real digest, placeholder-key signature + SLSA statement); activate CI (workflow scope); re-sign revocation list before `max_staleness_s` (issued 2026-10-06T08:42Z → stale after 2026-10-07 03:42 CT); optional flip of `list_url` to public HTTPS; keyless re-sign of published blobs via CI. Fake-peer smoke stays interim E8 only — never relabeled SITL PASS. **N1:** `--heartbeat-hz` ≤ 2. **N3:** dev-only skip flags gated + audited.
 
 ---
 

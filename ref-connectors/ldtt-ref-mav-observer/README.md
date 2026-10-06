@@ -5,7 +5,7 @@
 
 Read-only **MAVLink 2** telemetry observer. Local CLI display only. No egress. No hardware. Real ArduCopter SITL smoke (E8); fake-peer smoke is interim only. **$0** spend.
 
-Public repo: https://github.com/dustindent9-cmyk/ldtt
+Public repo: https://github.com/rockmed888-ship-it/ldtt
 
 ## Purpose
 
@@ -36,8 +36,10 @@ python -m ldtt_ref_mav_observer \
 
 ```bash
 scripts/build_release.sh          # reproducible wheel (SOURCE_DATE_EPOCH pinned) -> dist/ + sha256
-scripts/sign_release.sh           # local-key cosign sign + in-toto SLSA provenance (draft; CI does keyless)
+SOURCE_COMMIT=<public sha> scripts/sign_release.sh   # placeholder-key cosign sign + SLSA v1 provenance (draft)
 ```
+
+CI workflow: `ci/ldtt-ref-mav-observer-ci.yml` (belongs at repo-root `.github/workflows/`; not active until a token with `workflow` scope pushes it).
 
 ### Real SITL smoke (E8) — no Docker
 

@@ -1,4 +1,4 @@
-# E6 (C4) — regenerated 2026-10-06 04:14 CDT — LDTT_DEV unset; no dev-only flags
+# E6 (C4 + N3) — regenerated 2026-10-06 04:26 CDT — LDTT_DEV unset; no dev-only flags
 $ env -u LDTT_DEV pytest -v tests/test_revocation.py tests/test_cosign_and_locks.py tests/test_n3_dev_flags.py
 ============================= test session starts ==============================
 platform linux -- Python 3.13.5, pytest-9.1.1, pluggy-1.6.0 -- ./.venv/bin/python
@@ -36,4 +36,4 @@ tests/test_n3_dev_flags.py::test_release_run_has_no_dev_markers PASSED   [ 92%]
 tests/test_n3_dev_flags.py::test_evidence_checker_flags_skip_runs PASSED [ 96%]
 tests/test_n3_dev_flags.py::test_repo_evidence_does_not_rely_on_skip_flags PASSED [100%]
 
-============================== 28 passed in 0.23s ==============================
+============================== 28 passed in 0.25s ==============================

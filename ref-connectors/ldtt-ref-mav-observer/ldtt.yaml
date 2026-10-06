@@ -8,19 +8,19 @@ connector:
   version: "0.1.0"
   publisher: "LDTT"
   security_contact: "security@ldtt.example"
-  source_url: "https://github.com/dustindent9-cmyk/ldtt"
+  source_url: "https://github.com/rockmed888-ship-it/ldtt"
   license: "Apache-2.0"
   sbom: "sbom.spdx.json"
 
 build:
   # E3 / C3 (Phase 2 draft): reproducible wheel ldtt_ref_mav_observer-0.1.0-py3-none-any.whl
   # (scripts/build_release.sh; SOURCE_DATE_EPOCH pinned; CI rebuild must match this digest).
-  artifact_digest: "sha256:5873d62d5999bbeb448be7f438d16f9e605e9f032b5c4bc3206ad4895d7974c7"
-  # cosign sign-blob bundle for the wheel (local placeholder key; CI adds keyless + GitHub SLSA attestation)
+  artifact_digest: "sha256:1c8c29dbc9d0638d2a8ad4e5b703c0f408e07fd06c938606be6b660ac14de6b5"
+  # cosign sign-blob bundle for the wheel (local placeholder key, Rekor-logged; CI path adds keyless)
   signature: "dist/ldtt-ref-mav-observer.sigstore.json"
-  # DSSE-signed in-toto Statement, SLSA provenance v1 predicate (local builder; see evidence/e3-release-provenance.md)
+  # in-toto Statement, SLSA provenance v1 (local builder); DSSE signature bundle: dist/provenance.intoto.sigstore.json
   provenance: "dist/provenance.intoto.jsonl"
-  # Public commit on https://github.com/dustindent9-cmyk/ldtt containing the exact wheel inputs
+  # Public commit on https://github.com/rockmed888-ship-it/ldtt containing the exact wheel inputs
   source_commit: "0000000000000000000000000000000000000000"
 
 transport:
@@ -73,14 +73,14 @@ audit_log:
   includes: ["session", "scope_grant", "egress_opt_in", "revocation_check"]
 
 revocation:
-  # Spec v0.1.4: relative path OK (offline / DoD). Public HTTPS when live on dustindent9-cmyk/ldtt:
-  # https://raw.githubusercontent.com/dustindent9-cmyk/ldtt/main/revocations/revocations.json
+  # Spec v0.1.4: relative path OK (offline / DoD). Public HTTPS copy (live) on rockmed888-ship-it/ldtt:
+  # https://raw.githubusercontent.com/rockmed888-ship-it/ldtt/main/revocations/revocations.json
   list_url: "placeholders/revocations/revocations.json"
   check_interval_s: 3600
   max_staleness_s: 86400
 
 known_limitations:
   - control: "C3"
-    note: "Draft: wheel digest is real and reproducible, but signature + provenance are local placeholder-key (not issuer key / not keyless). CI keyless sign + GitHub SLSA attestation run on main; no hosted release asset yet."
+    note: "Draft: wheel digest is real and reproducible; signature + SLSA provenance are placeholder-key / local builder (not issuer key, not keyless, not CI-built). CI keyless + GitHub attestation workflow drafted but not active; no hosted release asset."
   - control: "C9"
     note: "Observe: mavlink signing false (allowed at Observe)."
