@@ -145,7 +145,7 @@ Token bucket on outbound requests at `reads_per_s` (capacity = refill = reads_pe
 | 9 | LGPL pymavlink | Document in SBOM (draft `sbom.spdx.json`). |
 | 10 | **LOG_REQUEST_*** | **LOCKED:** omitted from tx_allowlist + enforcement (scopes `observe:telemetry` only). |
 
-Remaining open: C3 issuer/keyless signing + CI-built provenance (local draft done: real digest, placeholder-key signature + SLSA statement); activate CI (workflow scope); re-sign revocation list before `max_staleness_s` (issued 2026-10-06T08:42Z → stale after 2026-10-07 03:42 CT); optional flip of `list_url` to public HTTPS; keyless re-sign of published blobs via CI. Fake-peer smoke stays interim E8 only — never relabeled SITL PASS. **N1:** `--heartbeat-hz` ≤ 2. **N3:** dev-only skip flags gated + audited.
+Remaining open: C3 issuer/keyless signing + CI-built provenance (local draft done: real digest, placeholder-key signature + SLSA statement); activate CI (workflow scope); re-sign revocation list before `max_staleness_s` (list_version 2 issued 2026-10-06T09:30:33Z → stale after 2026-10-07 04:30 CT); optional flip of `list_url` to public HTTPS; keyless re-sign of published blobs via CI. Fake-peer smoke stays interim E8 only — never relabeled SITL PASS. **N1:** `--heartbeat-hz` ≤ 2. **N3:** dev-only skip flags gated + audited.
 
 ---
 

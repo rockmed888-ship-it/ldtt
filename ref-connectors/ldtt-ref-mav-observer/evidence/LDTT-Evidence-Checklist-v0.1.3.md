@@ -1,6 +1,6 @@
 # LDTT Evidence Checklist (Spec v0.1.3/0.1.4) — ldtt-ref-mav-observer
 
-**Phase 2 draft** (updated 2026-10-06 ~04:35 CT). **Not final.** Manifest `ldtt_spec: "0.1.4"`.
+**Phase 2 draft** (updated 2026-10-06 ~04:40 CT). **Not final.** Manifest `ldtt_spec: "0.1.4"`.
 
 | Field | Value |
 |---|---|
@@ -33,9 +33,17 @@
 | Control | Note |
 |---|---|
 | C3 | Real reproducible digest + placeholder-key signature + local SLSA statement. Issuer/keyless signing, CI-built provenance and hosted release still pending. |
-| C4 | **No waiver.** Signed list required. Verify in-process (cryptography / sigstore-python); cosign CLI optional. Public HTTPS list available; connector uses relative path per N2 until creator flips. N3: dev-only skip flags gated by `LDTT_DEV=1` and audited. Published list `issued_at` 2026-10-06T08:42Z must be re-signed before `max_staleness_s` (24 h) or connectors fail closed. |
 | C9 | Observe: mavlink signing false |
-| E8 | SITL allowlists | O P C | Real ArduCopter SITL V4.7.1 re-run 2026-10-06 ~04:13 CT **without** dev flags: `e8-real-sitl-result.json` 17/17 (incl. `no_dev_only_flags_n3`) | ☑ draft |
+
+These match `ldtt.yaml` `known_limitations` and the stamp record exactly (C3, C9 only). **C4 has no known_limitation / no waiver** (Corrector A1).
+
+## C4 operations (not a limitation)
+
+Signed list required; verify in-process (cryptography / sigstore-python), cosign CLI optional fallback only. Connector uses relative `list_url` per N2; public HTTPS copy on https://github.com/rockmed888-ship-it/ldtt. N3: dev-only skip flags gated by `LDTT_DEV=1` and audited. Published list `list_version` 2, `issued_at` 2026-10-06T09:30:33Z (placeholder-key re-sign) → must be re-signed before 2026-10-07 ~04:30 CT (`max_staleness_s` 86400) or connectors fail closed.
+
+## Stamp record (draft)
+
+`stamps/org.ldtt.ref-mav-observer/0.1.0.json` re-issued 2026-10-06T09:30:33Z with real wheel digest `sha256:1c8c29db…6b5`, `known_limitations` C3 + C9, placeholder-key signature (verifies in-process). Draft only, not a real stamp.
 
 ## Holder attestation
 

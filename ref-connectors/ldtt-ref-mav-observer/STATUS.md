@@ -3,7 +3,9 @@
 **Brand:** Linked Drone Tool Trust · **Lead:** creator · Corrector reviews via creator
 **Tag:** Phase 2 · **Drafts only — not final**
 
-Updated: 2026-10-06 ~04:35 America/Chicago (CT)
+Updated: 2026-10-06 ~04:40 America/Chicago (CT)
+
+**Corrector N3 + E3 review: PASS** (draft, via creator; `reviews/LDTT-v0.1.4-and-Phase2-arch-corrector-notes.md`). Not Phase 2 freeze, not final.
 
 ## Corrector A1 — FIXED (draft); A1-r — FIXED (draft, this turn)
 
@@ -30,12 +32,12 @@ Updated: 2026-10-06 ~04:35 America/Chicago (CT)
 | Path | Live? |
 |---|---|
 | `LDTT-Stamp-Spec-v0.1.4.md`, `schema/ldtt.schema.json`, `schema/test_schema.py` | Yes (byte-identical to local) |
-| `revocations/revocations.json` + `.sigstore.json` | Yes (placeholder-key signed empty list, `issued_at` 2026-10-06T08:42Z) |
-| `stamps/org.ldtt.ref-mav-observer/0.1.0.json` + `.sigstore.json` | Yes (digest still zeros — re-issuing the stamp is for creator/Corrector, not done) |
+| `revocations/revocations.json` + `.sigstore.json` | Yes — re-signed (placeholder key): `list_version` **2** (was 1), `issued_at` **2026-10-06T09:30:33Z**, empty list. Verifies in-process (`verified_local_key`). Stale after 2026-10-07 ~04:30 CT. |
+| `stamps/org.ldtt.ref-mav-observer/0.1.0.json` + `.sigstore.json` | Yes — re-issued (draft, creator decision): real wheel digest `sha256:1c8c29dbc9d0638d2a8ad4e5b703c0f408e07fd06c938606be6b660ac14de6b5`, `known_limitations` C3 + C9 (same as `ldtt.yaml`), `issued_at` 2026-10-06T09:30:33Z, placeholder-key signature verifies in-process. Draft, not a real stamp. |
 | `ref-connectors/ldtt-ref-mav-observer/` | Synced this turn (N3 + E3), see final commit in report |
 | `.github/workflows/` | **Not pushed** — gh token scopes `repo, gist, read:org` lack `workflow`. Copy at `ci/ldtt-ref-mav-observer-ci.yml`. |
 
-Older note: dustindent9-cmyk/ldtt was the previous target (incomplete); Spec/schema were also pushed there earlier this turn before the switch. No further pushes there.
+**Canonical repo (P7, locked):** https://github.com/rockmed888-ship-it/ldtt only — `connector.source_url`, `list_url` HTTPS copy, provenance `source`/`buildType`, SBOM, docs. No other repo is referenced in config, provenance or docs.
 
 ## SITL PASS — real ArduPilot SITL (draft evidence)
 
@@ -54,13 +56,15 @@ Re-run 2026-10-06 ~04:13 CT **without** dev-only flags (N3): real ArduCopter SIT
 
 **57 passed** (pytest, 2026-10-06 CT; 1 skip only where cosign CLI absent). `ldtt.yaml` VALID vs schema v0.1.4.
 
-## Remaining before Phase 2 freeze / Corrector
+## Remaining before Phase 2 freeze review (PLAN REF — not blocking draft)
 
-1. Activate CI: push `ci/ldtt-ref-mav-observer-ci.yml` to repo-root `.github/workflows/` with a `workflow`-scoped token → keyless sign + GitHub SLSA attestation + digest-match check.
-2. Issuer decision: placeholder key vs keyless identity for lists/stamps/artifacts.
-3. **Re-sign revocation list** before 2026-10-07 ~03:42 CT (`max_staleness_s` 86400) or connectors (and CI real-SITL) fail closed.
-4. Re-issue stamp record with real digest (creator/Corrector call).
-5. Corrector review of N3 + E3 (via creator).
+| Ref | Item | Status |
+|---|---|---|
+| P5 | CI keyless sign + GitHub SLSA attestation + digest-match rebuild | Blocked on gh `workflow` scope. Workflow stays at `ci/ldtt-ref-mav-observer-ci.yml` (not pushed to `.github/workflows/`). |
+| P6 | Trust root: placeholder key → LDTT issuer key (creator, §9.1) or keyless issuer identity; update connector verify config | Later, before any real stamp. Placeholder local-key kept; honest C3 known_limitation. |
+| P7 | Canonical repo locked: rockmed888-ship-it/ldtt | Done (draft). |
+| Ops | Re-sign `revocations/revocations.json` (bump `list_version`, never decrease) | Next due before **2026-10-07 ~04:30 CT** (issued 2026-10-06T09:30:33Z + 86400 s). |
+| — | Phase 2 freeze decision | Creator (via Open Builder). Not called here. |
 
 ## Confirmations
 

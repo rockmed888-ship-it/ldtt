@@ -28,3 +28,19 @@ Fixed: the fetch path never applies an unverified list. A failed verify or missi
 
 ## Carry to Phase 2 freeze (outside this check)
 - N3: --skip-revoke and --no-interval-check turn off C4 silently. Before the Phase 2 freeze: gate them behind a dev-only switch (e.g. LDTT_DEV=1) or strip them from release builds, audit-log revocation_check outcome "skipped" when used, and make sure E6 evidence comes from runs without them.
+
+## N3 + E3 review (Phase 2 draft, 57 tests): PASS
+N3: --skip-revoke / --no-interval-check need LDTT_DEV=1 exactly. Without it they're refused (exit 2, audited, no session). With it, every skip is audited (skipped_dev / interval_skipped_dev), and the session is marked dev_mode / evidence_eligible:false. The evidence checker runs in tests/CI. E6, E5 and E8 evidence contain no skip markers; older runs were moved to superseded-dev-flags/. 57/57 pass.
+E3 (checked independently):
+- wheel sha256 = 1c8c29db… matches SHA256SUMS and ldtt.yaml artifact_digest.
+- The wheel signature verifies against placeholders/keys/ldtt-placeholder.pub, and a tampered wheel fails.
+- The provenance DSSE envelope verifies against the same key. Its subject is the wheel digest, and its source is commit fe1e34e.
+- fe1e34e exists publicly on github.com/rockmed888-ship-it/ldtt.
+- The private key is gitignored and not in the public repo tree; it's an encrypted sigstore key on the box only.
+- The C3 known_limitation honestly states placeholder key, local builder, CI keyless inactive.
+
+## PLAN REF (before the Phase 2 freeze / first real stamp)
+- P5: Turn on CI keyless signing + attest-build-provenance (the workflow has to live at repo-root .github/workflows/). CI should rebuild and check the digest. I didn't rebuild the wheel myself.
+- P6: Trust root. The revocation list and wheel are verified with a placeholder key that sits on the shared box. Before any real stamp, move to the LDTT issuer key held by creator (§9.1), or a keyless issuer identity, and update the connector's verify config.
+- P7: Canonical repo. An earlier draft referenced github.com/dustindent9-cmyk/ldtt; it's now rockmed888-ship-it/ldtt. Lock one, because source_url, provenance, list_url and any keyless identity all bind to it.
+- Ops (not spec): re-sign revocations.json before ~2026-10-07 03:42 CT, or Observe fails closed (warns) on staleness.
