@@ -38,7 +38,7 @@ Updated: 2026-10-06 ~05:45 America/Chicago (CT) — N4 revoke re-sign done
 | Path | Live? |
 |---|---|
 | `LDTT-Stamp-Spec-v0.1.4.md`, `schema/ldtt.schema.json`, `schema/test_schema.py` | Yes (byte-identical to local) |
-| `revocations/revocations.json` + `.sigstore.json` | Yes — placeholder-key signed: `list_version` **6**, `issued_at` **2026-10-06T17:18:41Z** (12:18 CT), empty list, `ldtt_spec` **0.1.4**. Verifies (cosign CLI `Verified OK` + in-process `verified_local_key`). Stale after **2026-10-07 12:18 CT** (2026-10-07T17:18:41Z). *(Ops re-sign 2026-10-06 12:18 CT, v5→v6; stamp `0.1.0` not re-signed — no field depends on the list.)* |
+| `revocations/revocations.json` + `.sigstore.json` | Yes — placeholder-key signed: `list_version` **7**, `issued_at` **2026-10-07T13:46:51Z** (08:46 CT), empty list, `ldtt_spec` **0.1.4**. Verifies (cosign CLI `Verified OK` + in-process `verified_local_key`). Stale after **2026-10-08 08:46 CT** (2026-10-08T13:46:51Z). *(Ops re-sign 2026-10-07 08:46 CT, v6→v7; stamp `0.1.0` not re-signed — no field depends on the list.)* |
 | `stamps/org.ldtt.ref-mav-observer/0.1.0.json` + `.sigstore.json` | Yes — **draft/placeholder stamp only** (not a real trust-root stamp): real wheel digest `sha256:1c8c29dbc9d0638d2a8ad4e5b703c0f408e07fd06c938606be6b660ac14de6b5`, `known_limitations` C3 + C9, `issued_at` 2026-10-06T10:41:27Z, `ldtt_spec` **0.1.4** (N4), placeholder-key signature (re-signed, verifies). |
 | `ref-connectors/ldtt-ref-mav-observer/` | Synced through freeze-prep; this commit is STATUS freeze flip (N5) |
 | `.github/workflows/` | **Not pushed** — gh token scopes `repo, gist, read:org` lack `workflow`. Copy at `ci/ldtt-ref-mav-observer-ci.yml`. **P5 stays PLAN REF.** |
@@ -70,7 +70,7 @@ Re-run 2026-10-06 ~04:13 CT **without** dev-only flags (N3): real ArduCopter SIT
 | **P6** | Trust root: placeholder key → LDTT issuer key (creator, §9.1) or keyless issuer identity; update connector verify config | **PLAN REF** — required before any **real** stamp. Placeholder local-key kept; honest C3 known_limitation. |
 | P7 | Canonical repo locked: rockmed888-ship-it/ldtt | Done (under freeze). |
 | **N4** | Revoke re-sign 2026-10-06 ~05:41 CT: `list_version` 2→**3**, `ldtt_spec` → **0.1.4** on stamp `0.1.0.json` **and** `revocations.json`, `issued_at` 2026-10-06T10:41:27Z; both re-signed with placeholder key, verified CLI + in-process; connector `placeholders/` mirrored. | **DONE** |
-| Ops | Re-sign `revocations/revocations.json` (bump `list_version`, never decrease) | **Done 2026-10-06 12:18 CT:** `list_version` 5→**6**, `issued_at` 2026-10-06T17:18:41Z, revoked `[]`, placeholder key, CLI + in-process verified, `placeholders/` mirrored byte-identical. Next due before **2026-10-07 12:18 CT** (2026-10-07T17:18:41Z = issued_at + 86400 s); next `list_version` 7. |
+| Ops | Re-sign `revocations/revocations.json` (bump `list_version`, never decrease) | **Done 2026-10-07 08:46 CT:** `list_version` 6→**7**, `issued_at` 2026-10-07T13:46:51Z, revoked `[]`, placeholder key, CLI + in-process verified, `placeholders/` mirrored byte-identical. Next due before **2026-10-08 08:46 CT** (2026-10-08T13:46:51Z = issued_at + 86400 s); next `list_version` 8. |
 
 ## Confirmations
 
@@ -78,7 +78,7 @@ Re-run 2026-10-06 ~04:13 CT **without** dev-only flags (N3): real ArduCopter SIT
 - Connector/stamp **0.1.0**: **draft/placeholder stamp only** — **NOT** a real trust-root stamp
 - P5 / P6: **PLAN REF** (not done)
 - N4: **done** (list_version 3, ldtt_spec 0.1.4 on stamp + revocations; placeholder key)
-- Ops re-sign 2026-10-06 12:18 CT: revocations `list_version` **6** (issued 2026-10-06T17:18:41Z; stamp untouched). Next due before **2026-10-07 12:18 CT**.
+- Ops re-sign 2026-10-07 08:46 CT: revocations `list_version` **7** (issued 2026-10-07T13:46:51Z; stamp untouched). Next due before **2026-10-08 08:46 CT**.
 - Spend: **$0**
 - Hardware: **none**
 - Brand: **Linked Drone Tool Trust**

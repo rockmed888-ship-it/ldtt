@@ -7,12 +7,12 @@ Canonical repo (P7, locked): **rockmed888-ship-it/ldtt**.
 
 | Path | Status |
 |---|---|
-| `revocations/revocations.json` | published — empty list, `list_version` **6**, `issued_at` 2026-10-06T17:18:41Z (12:18 CT), `ldtt_spec` **0.1.4**, placeholder-key signed (24 h ops re-sign; was v5 @ 14:14:41Z) |
+| `revocations/revocations.json` | published — empty list, `list_version` **7**, `issued_at` 2026-10-07T13:46:51Z (08:46 CT), `ldtt_spec` **0.1.4**, placeholder-key signed (24 h ops re-sign; was v6 @ 17:18:41Z) |
 | `revocations/revocations.json.sigstore.json` | published (cosign sign-blob, placeholder key, Rekor-logged) |
 | `stamps/org.ldtt.ref-mav-observer/0.1.0.json` | published **draft/placeholder** — real wheel digest `sha256:1c8c29dbc9d0638d2a8ad4e5b703c0f408e07fd06c938606be6b660ac14de6b5`, known_limitations C3 + C9, `issued_at` 2026-10-06T10:41:27Z, `ldtt_spec` **0.1.4** (N4) — **NOT** a real trust-root stamp |
 | `stamps/org.ldtt.ref-mav-observer/0.1.0.json.sigstore.json` | published (placeholder key, Rekor-logged) |
 
-Connector copies under `ref-connectors/ldtt-ref-mav-observer/placeholders/` are byte-identical (list v6: json sha256 `5d54f15e…8ba4`, bundle `7d92d373…a489`).
+Connector copies under `ref-connectors/ldtt-ref-mav-observer/placeholders/` are byte-identical (list v7: json sha256 `5e9f13a7…ba25`, bundle `279adfbe…0d23`).
 
 Raw HTTPS (for future `list_url` flip):
 `https://raw.githubusercontent.com/rockmed888-ship-it/ldtt/main/revocations/revocations.json`
@@ -21,10 +21,10 @@ Connector currently uses Spec v0.1.4 **relative** path per Corrector N2.
 
 ## Recurring: revocation list re-sign
 
-`max_staleness_s` = 86400. Re-sign at least every 24 h (next due before **2026-10-07 12:18 CT** = 2026-10-07T17:18:41Z):
-1. Set `issued_at` to now (UTC), bump `list_version` by 1 (never decrease; next = 7). Keep `ldtt_spec` **0.1.4** (N4 done).
+`max_staleness_s` = 86400. Re-sign at least every 24 h (next due before **2026-10-08 08:46 CT** = 2026-10-08T13:46:51Z):
+1. Set `issued_at` to now (UTC), bump `list_version` by 1 (never decrease; next = 8). Keep `ldtt_spec` **0.1.4** (N4 done).
 
-Log: v3 2026-10-06T10:41:27Z (N4, `d65b4ed`) → v4 2026-10-06T12:12:10Z (07:12 CT) → v5 2026-10-06T14:14:41Z (09:14 CT) → **v6 2026-10-06T17:18:41Z** (12:18 CT, ops re-sign, revoked `[]`; stamp `0.1.0` not re-signed — no stamp field depends on the list).
+Log: v3 2026-10-06T10:41:27Z (N4, `d65b4ed`) → v4 2026-10-06T12:12:10Z (07:12 CT) → v5 2026-10-06T14:14:41Z (09:14 CT) → v6 2026-10-06T17:18:41Z (12:18 CT) → **v7 2026-10-07T13:46:51Z** (08:46 CT, ops re-sign, revoked `[]`; stamp `0.1.0` not re-signed — no stamp field depends on the list).
 2. `cosign sign-blob --yes --key placeholders/keys/ldtt-placeholder.key --bundle revocations/revocations.json.sigstore.json revocations/revocations.json`
 3. Verify (`cosign verify-blob --key …/ldtt-placeholder.pub` and in-process `verified_local_key`), copy to `placeholders/revocations/`, push (no force-push).
 
