@@ -1,0 +1,381 @@
+# BOX DRAFT — DO NOT PUSH until workflow-scope device-code OK. Spec v0.2 r5.1 FROZEN §A.2/A.3.
+#
+# LDTT Issuer workflow (keyless Fulcio/Rekor). Real stamps/lists/trust-root are keyless (Spec §A.1).
+# Placeholder-key path is draft-only and must NOT be used for "real" claims.
+#
+# Pinned identity (Spec §A.2):
+#   https://github.com/rockmed888-ship-it/ldtt/.github/workflows/ldtt-issue.yml@refs/heads/main
+# OIDC issuer: https://token.actions.githubusercontent.com
+#
+# May sign: stamps/* ; trust/trust-root.json ; ANY revocation list including removals;
+#           when publishing a list, also write revocations/base/* (Issuer-only).
+# Issuer-signed lists OMIT the `base` field (§A.2.1).
+#
+# Gate: environment `ldtt-issuer` with required reviewer (Lead must create this
+# Environment on GitHub later — this draft does NOT create Environments or rulesets).
+#
+# issued_at is generated AFTER environment approval, inside this gated job,
+# immediately before sign (Spec §A.3.4 [R2]).
+name: ldtt-issue
+
+on:
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: "What to issue"
+        required: true
+        type: choice
+        options:
+          - stamp
+          - trust-root
+          - revocation-list
+      stamp_path:
+        description: "Path under stamps/ to sign (mode=stamp), e.g. stamps/org.ldtt.ref-mav-observer/0.1.0.json"
+        required: false
+        default: ""
+      trust_root_path:
+        description: "Trust-root path (mode=trust-root); default trust/trust-root.json"
+        required: false
+        default: "trust/trust-root.json"
+      list_body_json:
+        description: "Full revocation list JSON body WITHOUT issued_at (mode=revocation-list). issued_at is set in-job after approval. Omit base field (Issuer)."
+        required: false
+        default: ""
+
+# Spec §A.3.4 [FOLD2] — shared with ldtt-revoke.yml.
+concurrency:
+  group: ldtt-revocations
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+env:
+  ISSUER_IDENTITY: https://github.com/rockmed888-ship-it/ldtt/.github/workflows/ldtt-issue.yml@refs/heads/main
+  OIDC_ISSUER: https://token.actions.githubusercontent.com
+  LIST_PATH: revocations/revocations.json
+  BUNDLE_PATH: revocations/revocations.json.sigstore.json
+  BASE_PATH: revocations/base/revocations.json
+  BASE_BUNDLE_PATH: revocations/base/revocations.json.sigstore.json
+  TRUST_PATH: trust/trust-root.json
+  SELFVERIFY_LOG: revocations/selfverify-failures.log
+
+jobs:
+  # Optional read-only preview (no environment gate). Does not generate issued_at.
+  preview:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: main
+          fetch-depth: 1
+      - name: Show mode and inputs
+        run: |
+          set -euo pipefail
+          echo "mode=${{ inputs.mode }}"
+          echo "stamp_path=${{ inputs.stamp_path }}"
+          echo "trust_root_path=${{ inputs.trust_root_path }}"
+          echo "NOTE: issued_at is NOT generated here — only inside gated sign-and-publish after approval (R2)."
+
+  sign-and-publish:
+    needs: preview
+    # W3: only publish from main (identity pins @refs/heads/main).
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    # Lead must create Environment `ldtt-issuer` with required reviewer later.
+    # This workflow references it; we do NOT create Environments or rulesets from the box.
+    environment: ldtt-issuer
+    # Spec §A.3.4 — only this job gets id-token + contents write.
+    permissions:
+      contents: write
+      id-token: write
+    steps:
+      - name: Checkout main
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Record HEAD at read time (FOLD2)
+        id: head
+        run: |
+          set -euo pipefail
+          echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+
+      - name: Install cosign
+        uses: sigstore/cosign-installer@6f9f17788090df1f26f669e9d70d6ae9567deba6
+
+      - name: Materialize payload + issued_at AFTER approval (R2)
+        id: prep
+        env:
+          MODE: ${{ inputs.mode }}
+          STAMP_PATH: ${{ inputs.stamp_path }}
+          TRUST_ROOT_PATH: ${{ inputs.trust_root_path }}
+          LIST_BODY_JSON: ${{ inputs.list_body_json }}
+        run: |
+          set -euo pipefail
+          # issued_at generated HERE — after environment approval, immediately before sign (R2).
+          # Never from preview job, inputs, or approval request.
+          ISSUED_AT=$(date -u +%Y-%m-%dT%H:%M:%SZ)
+          echo "issued_at=$ISSUED_AT" >> "$GITHUB_OUTPUT"
+          echo "mode=$MODE" >> "$GITHUB_OUTPUT"
+          export ISSUED_AT
+
+          mkdir -p /tmp/ldtt-issue
+          case "$MODE" in
+            stamp)
+              SP="$STAMP_PATH"
+              # Prefix check then W1 path-escape guard (validate step).
+              if [ -z "$SP" ] || [[ "$SP" != stamps/* ]]; then
+                echo "::error::stamp_path must be under stamps/"
+                exit 1
+              fi
+              # BEGIN W1 path-guard (validate)
+              RESOLVED=$(python3 scripts/ldtt_path_guard.py --root stamps --path "$SP" --must-exist)
+              echo "W1 path-guard OK (validate): $RESOLVED"
+              # END W1 path-guard (validate)
+              SP="$SP" python3 - <<'PY'
+          import json, pathlib, os
+          p = pathlib.Path(os.environ["SP"])
+          doc = json.loads(p.read_text())
+          doc["issued_at"] = os.environ["ISSUED_AT"]
+          p.write_text(json.dumps(doc, indent=2) + "\n")
+          print("stamp issued_at set", p)
+          PY
+              echo "target=$SP" >> "$GITHUB_OUTPUT"
+              echo "commit_label=stamp:$SP" >> "$GITHUB_OUTPUT"
+              ;;
+            trust-root)
+              TP="${TRUST_ROOT_PATH:-trust/trust-root.json}"
+              if [[ "$TP" != trust/* ]]; then
+                echo "::error::trust_root_path must be under trust/"
+                exit 1
+              fi
+              # BEGIN W1 path-guard (validate)
+              RESOLVED=$(python3 scripts/ldtt_path_guard.py --root trust --path "$TP" --must-exist)
+              echo "W1 path-guard OK (validate): $RESOLVED"
+              # END W1 path-guard (validate)
+              SP="$TP" python3 - <<'PY'
+          import json, pathlib, os
+          p = pathlib.Path(os.environ["SP"])
+          doc = json.loads(p.read_text())
+          doc["issued_at"] = os.environ["ISSUED_AT"]
+          p.write_text(json.dumps(doc, indent=2) + "\n")
+          print("trust-root issued_at set", p)
+          PY
+              echo "target=$TP" >> "$GITHUB_OUTPUT"
+              echo "commit_label=trust-root" >> "$GITHUB_OUTPUT"
+              ;;
+            revocation-list)
+              BODY="$LIST_BODY_JSON"
+              if [ -z "$BODY" ]; then
+                echo "::error::list_body_json required for revocation-list mode"
+                exit 1
+              fi
+              printf '%s\n' "$BODY" > /tmp/ldtt-issue/body.json
+              python3 - <<'PY'
+          import json, os, pathlib, sys
+          doc = json.loads(pathlib.Path("/tmp/ldtt-issue/body.json").read_text())
+          if "base" in doc:
+              sys.exit("Issuer-signed lists must OMIT base field (Spec §A.2.1)")
+          for k in ("ldtt_spec", "issuer", "list_version", "revoked"):
+              if k not in doc:
+                  sys.exit(f"list missing {k}")
+          pub = pathlib.Path("revocations/revocations.json")
+          if pub.is_file():
+              prev = json.loads(pub.read_text())
+              if int(doc["list_version"]) != int(prev["list_version"]) + 1:
+                  sys.exit(
+                      f"list_version must be previous+1 "
+                      f"({prev['list_version']}+1); got {doc['list_version']}"
+                  )
+              if doc["issuer"] != prev["issuer"] or doc["ldtt_spec"] != prev["ldtt_spec"]:
+                  print("note: issuer/ldtt_spec differ from published — intentional?", file=sys.stderr)
+          doc["issued_at"] = os.environ["ISSUED_AT"]
+          doc.pop("base", None)
+          out = pathlib.Path("revocations/revocations.json")
+          out.parent.mkdir(parents=True, exist_ok=True)
+          text = json.dumps(doc, indent=2) + "\n"
+          out.write_text(text)
+          base = pathlib.Path("revocations/base/revocations.json")
+          base.parent.mkdir(parents=True, exist_ok=True)
+          base.write_text(text)
+          print("Issuer list+base written list_version=", doc["list_version"])
+          PY
+              echo "target=$LIST_PATH" >> "$GITHUB_OUTPUT"
+              LV=$(python3 -c "import json; print(json.load(open('$LIST_PATH'))['list_version'])")
+              echo "list_version=$LV" >> "$GITHUB_OUTPUT"
+              echo "commit_label=list_version=$LV" >> "$GITHUB_OUTPUT"
+              ;;
+            *)
+              echo "::error::unknown mode $MODE"
+              exit 1
+              ;;
+          esac
+
+      - name: Keyless cosign sign-blob (Fulcio + Rekor)
+        id: sign
+        run: |
+          set -euo pipefail
+          MODE="${{ inputs.mode }}"
+          case "$MODE" in
+            stamp)
+              T="${{ inputs.stamp_path }}"
+              cosign sign-blob --yes --bundle "${T}.sigstore.json" "$T"
+              echo "bundle=${T}.sigstore.json" >> "$GITHUB_OUTPUT"
+              echo "blob=$T" >> "$GITHUB_OUTPUT"
+              ;;
+            trust-root)
+              T="${{ inputs.trust_root_path }}"
+              T="${T:-trust/trust-root.json}"
+              cosign sign-blob --yes --bundle "${T}.sigstore.json" "$T"
+              echo "bundle=${T}.sigstore.json" >> "$GITHUB_OUTPUT"
+              echo "blob=$T" >> "$GITHUB_OUTPUT"
+              ;;
+            revocation-list)
+              cosign sign-blob --yes --bundle "$BUNDLE_PATH" "$LIST_PATH"
+              # Same signature bundle for base (identical bytes)
+              cp "$BUNDLE_PATH" "$BASE_BUNDLE_PATH"
+              echo "bundle=$BUNDLE_PATH" >> "$GITHUB_OUTPUT"
+              echo "blob=$LIST_PATH" >> "$GITHUB_OUTPUT"
+              ;;
+          esac
+
+      - name: Self-verify before commit (N28) against Issuer identity
+        id: selfverify
+        run: |
+          set -euo pipefail
+          BLOB="${{ steps.sign.outputs.blob }}"
+          BUNDLE="${{ steps.sign.outputs.bundle }}"
+          MODE="${{ inputs.mode }}"
+          FAIL_REASON=""
+          log_fail() {
+            FAIL_REASON="$1"
+            echo "::error::N28 self-verify failed: $FAIL_REASON"
+            {
+              echo "### N28 self-verify failure (Issuer)"
+              echo "- reason: $FAIL_REASON"
+              echo "- workflow_sha: ${{ github.sha }}"
+              echo "- mode: $MODE"
+              echo "- blob: $BLOB"
+            } >> "$GITHUB_STEP_SUMMARY"
+            TS=$(date -u +%Y-%m-%dT%H:%M:%SZ)
+            mkdir -p revocations
+            echo "$TS workflow_sha=${{ github.sha }} mode=$MODE reason=$FAIL_REASON" >> "$SELFVERIFY_LOG"
+            echo "failed=true" >> "$GITHUB_OUTPUT"
+            exit 1
+          }
+
+          cosign verify-blob \
+            --bundle "$BUNDLE" \
+            --certificate-identity "$ISSUER_IDENTITY" \
+            --certificate-oidc-issuer "$OIDC_ISSUER" \
+            "$BLOB" || log_fail "cosign verify-blob against Issuer identity"
+
+          # W4: §A.3.6 time check for ALL modes (list, stamp, trust-root)
+          python3 scripts/ldtt_revoke_prepare.py check-time \
+            --doc "$BLOB" --bundle "$BUNDLE" || log_fail "A.3.6 issued_at vs Rekor time"
+
+          if [ "$MODE" = "revocation-list" ]; then
+            # W5: schema required
+            python3 scripts/validate_revocation_list.py --forbid-base "$LIST_PATH" \
+              || log_fail "schema validation"
+            python3 - <<'PY' || log_fail "Issuer list shape"
+          import json, pathlib, sys
+          doc = json.loads(pathlib.Path("revocations/revocations.json").read_text())
+          if "base" in doc:
+              sys.exit("Issuer list must omit base")
+          base = json.loads(pathlib.Path("revocations/base/revocations.json").read_text())
+          if base != doc:
+              sys.exit("base/* bytes must equal published list for Issuer publish")
+          print("Issuer list shape OK")
+          PY
+            cosign verify-blob \
+              --bundle "$BASE_BUNDLE_PATH" \
+              --certificate-identity "$ISSUER_IDENTITY" \
+              --certificate-oidc-issuer "$OIDC_ISSUER" \
+              "$BASE_PATH" || log_fail "base bundle verify"
+          fi
+
+          echo "failed=false" >> "$GITHUB_OUTPUT"
+          echo "N28 self-verify OK"
+
+      - name: Upload selfverify artifact on failure
+        if: failure() && steps.selfverify.outputs.failed == 'true'
+        # W2: pin full SHA — actions/upload-artifact@v4.6.2
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: issuer-selfverify-failures-${{ github.run_id }}
+          path: |
+            ${{ env.SELFVERIFY_LOG }}
+            ${{ steps.sign.outputs.bundle }}
+            ${{ steps.sign.outputs.blob }}
+
+      - name: Path-scope guard + commit (fast-forward only) [FOLD2]
+        if: success() && steps.selfverify.outputs.failed != 'true'
+        run: |
+          set -euo pipefail
+          MODE="${{ inputs.mode }}"
+          case "$MODE" in
+            stamp)
+              SP="${{ inputs.stamp_path }}"
+              # BEGIN W1 path-guard (pre-git-add) — same guard as validate
+              RESOLVED=$(python3 scripts/ldtt_path_guard.py --root stamps --path "$SP" --must-exist)
+              echo "W1 path-guard OK (pre-git-add): $RESOLVED"
+              BUNDLE_PATH_LOCAL="${SP}.sigstore.json"
+              # Bundle must sit beside the stamp (same directory under stamps/)
+              python3 scripts/ldtt_path_guard.py --root stamps --path "$BUNDLE_PATH_LOCAL" --must-exist >/dev/null
+              # END W1 path-guard (pre-git-add)
+              git add -- "$SP" "$BUNDLE_PATH_LOCAL"
+              ;;
+            trust-root)
+              T="${{ inputs.trust_root_path }}"
+              T="${T:-trust/trust-root.json}"
+              # BEGIN W1 path-guard (pre-git-add) — same guard as validate
+              RESOLVED=$(python3 scripts/ldtt_path_guard.py --root trust --path "$T" --must-exist)
+              echo "W1 path-guard OK (pre-git-add): $RESOLVED"
+              BUNDLE_PATH_LOCAL="${T}.sigstore.json"
+              python3 scripts/ldtt_path_guard.py --root trust --path "$BUNDLE_PATH_LOCAL" --must-exist >/dev/null
+              # END W1 path-guard (pre-git-add)
+              git add -- "$T" "$BUNDLE_PATH_LOCAL"
+              ;;
+            revocation-list)
+              git add -- "$LIST_PATH" "$BUNDLE_PATH" "$BASE_PATH" "$BASE_BUNDLE_PATH"
+              ;;
+          esac
+          if [ -f "$SELFVERIFY_LOG" ]; then
+            git add -- "$SELFVERIFY_LOG"
+          fi
+
+          mapfile -t STAGED < <(git diff --cached --name-only)
+          for f in "${STAGED[@]}"; do
+            case "$f" in
+              stamps/*|trust/*|revocations/revocations.json|revocations/revocations.json.sigstore.json|revocations/base/*|revocations/selfverify-failures.log) ;;
+              *)
+                echo "::error::path-scope violation: $f"
+                exit 1
+                ;;
+            esac
+          done
+
+          git fetch origin main
+          REMOTE=$(git rev-parse origin/main)
+          EXPECTED="${{ steps.head.outputs.sha }}"
+          if [ "$REMOTE" != "$EXPECTED" ]; then
+            echo "::error::main moved since read ($EXPECTED -> $REMOTE); fail per FOLD2"
+            exit 1
+          fi
+
+          LABEL="${{ steps.prep.outputs.commit_label }}"
+          WSHA="${{ github.sha }}"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "issue: ${LABEL} workflow_sha=${WSHA}"
+
+          if ! git push origin HEAD:main; then
+            echo "::error::push rejected (non-fast-forward). Fail per FOLD2."
+            exit 1
+          fi
+          echo "Published ${LABEL}"

@@ -1,0 +1,274 @@
+# BOX DRAFT — DO NOT PUSH until workflow-scope device-code OK. Spec v0.2 r5.1 FROZEN §A.2/A.3.
+#
+# LDTT Revoke workflow (keyless Fulcio/Rekor). Real lists are keyless (Spec §A.1).
+# Placeholder-key path is draft-only and must NOT be used for "real" claims.
+# Until P6 live (trust root + Issuer base published), this is the target shape for review.
+#
+# Pinned identity (Spec §A.2):
+#   https://github.com/rockmed888-ship-it/ldtt/.github/workflows/ldtt-revoke.yml@refs/heads/main
+# OIDC issuer: https://token.actions.githubusercontent.com
+#
+# May sign: revocations/revocations.json only (append-only successor of Issuer base §A.2.1).
+# Must NOT write: revocations/base/*, stamps, trust, workflows, or other paths.
+# Gate: none (schedule + workflow_dispatch) so re-signing never waits for a click.
+#
+# Lead later: Environments/rulesets are NOT created by this draft.
+name: ldtt-revoke
+
+on:
+  schedule:
+    # Spec §A.3.9 — well inside shortest max_staleness_s (e.g. 86400); every 6h.
+    - cron: "0 */6 * * *"
+  workflow_dispatch:
+    inputs:
+      extra_revoked_json:
+        description: "Optional JSON array of revoked[] entries to append (default empty)"
+        required: false
+        default: "[]"
+
+# Spec §A.3.4 [FOLD2] — shared with ldtt-issue.yml; one list at a time.
+concurrency:
+  group: ldtt-revocations
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+env:
+  REVOKE_IDENTITY: https://github.com/rockmed888-ship-it/ldtt/.github/workflows/ldtt-revoke.yml@refs/heads/main
+  OIDC_ISSUER: https://token.actions.githubusercontent.com
+  LIST_PATH: revocations/revocations.json
+  BUNDLE_PATH: revocations/revocations.json.sigstore.json
+  BASE_PATH: revocations/base/revocations.json
+  BASE_BUNDLE_PATH: revocations/base/revocations.json.sigstore.json
+  SELFVERIFY_LOG: revocations/selfverify-failures.log
+
+jobs:
+  # Read-only job: surface what we will re-sign. No id-token / contents write.
+  plan:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    outputs:
+      published_version: ${{ steps.read.outputs.published_version }}
+      base_version: ${{ steps.read.outputs.base_version }}
+    steps:
+      - name: Checkout main
+        # Pin full commit SHA (Spec §A.3.2). actions/checkout@v4.4.0
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: main
+          fetch-depth: 1
+
+      - name: Read published + base versions
+        id: read
+        run: |
+          set -euo pipefail
+          if [ ! -f "$LIST_PATH" ]; then
+            echo "::error::missing published $LIST_PATH"
+            exit 1
+          fi
+          if [ ! -f "$BASE_PATH" ]; then
+            echo "::error::missing Issuer base $BASE_PATH — Revoke cannot run until Issuer publishes base (Spec §A.2.1)"
+            exit 1
+          fi
+          PV=$(python3 -c "import json; print(json.load(open('$LIST_PATH'))['list_version'])")
+          BV=$(python3 -c "import json; print(json.load(open('$BASE_PATH'))['list_version'])")
+          echo "published_version=$PV" >> "$GITHUB_OUTPUT"
+          echo "base_version=$BV" >> "$GITHUB_OUTPUT"
+          echo "published list_version=$PV base list_version=$BV"
+
+  sign-and-publish:
+    needs: plan
+    # W3: only publish from main (identity pins @refs/heads/main).
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    # Spec §A.3.4 — only this job gets id-token + contents write.
+    permissions:
+      contents: write
+      id-token: write
+    steps:
+      - name: Checkout main (for publish commit)
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: main
+          # Need enough history to detect non-fast-forward cleanly.
+          fetch-depth: 0
+
+      - name: Record HEAD at read time (FOLD2)
+        id: head
+        run: |
+          set -euo pipefail
+          echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+          echo "workflow_sha=${{ github.sha }}" >> "$GITHUB_OUTPUT"
+
+      - name: Install cosign
+        # Pin full commit SHA. sigstore/cosign-installer@v4.1.2
+        uses: sigstore/cosign-installer@6f9f17788090df1f26f669e9d70d6ae9567deba6
+
+      - name: Build next list (§A.2.1) — issued_at immediately before sign [R2]
+        id: build
+        env:
+          EXTRA: ${{ github.event.inputs.extra_revoked_json || '[]' }}
+        run: |
+          set -euo pipefail
+          # issued_at generated HERE, inside this job, immediately before signing (R2).
+          # Never carried from plan job, PR, or schedule payload.
+          ISSUED_AT=$(date -u +%Y-%m-%dT%H:%M:%SZ)
+          echo "issued_at=$ISSUED_AT" >> "$GITHUB_OUTPUT"
+
+          mkdir -p /tmp/ldtt-revoke
+          printf '%s\n' "$EXTRA" > /tmp/ldtt-revoke/extra.json
+
+          python3 scripts/ldtt_revoke_prepare.py build \
+            --base "$BASE_PATH" \
+            --published "$LIST_PATH" \
+            --extra-revoked /tmp/ldtt-revoke/extra.json \
+            --issued-at "$ISSUED_AT" \
+            --out /tmp/ldtt-revoke/next.json
+
+          python3 scripts/ldtt_revoke_prepare.py check \
+            --base "$BASE_PATH" \
+            --published "$LIST_PATH" \
+            --candidate /tmp/ldtt-revoke/next.json
+
+          LV=$(python3 -c "import json; print(json.load(open('/tmp/ldtt-revoke/next.json'))['list_version'])")
+          echo "list_version=$LV" >> "$GITHUB_OUTPUT"
+          cp /tmp/ldtt-revoke/next.json "$LIST_PATH"
+          echo "Built list_version=$LV issued_at=$ISSUED_AT"
+
+      - name: Keyless cosign sign-blob (Fulcio + Rekor)
+        id: sign
+        run: |
+          set -euo pipefail
+          # Real lists are keyless (Spec §A.1). Placeholder-key must not be used here.
+          cosign sign-blob --yes --bundle "$BUNDLE_PATH" "$LIST_PATH"
+          echo "signed"
+
+      - name: Self-verify before commit (N28)
+        id: selfverify
+        run: |
+          set -euo pipefail
+          FAIL_REASON=""
+          log_fail() {
+            FAIL_REASON="$1"
+            echo "::error::N28 self-verify failed: $FAIL_REASON"
+            {
+              echo "### N28 self-verify failure"
+              echo "- reason: $FAIL_REASON"
+              echo "- workflow_sha: ${{ github.sha }}"
+              echo "- list_version: ${{ steps.build.outputs.list_version }}"
+              echo "- issued_at: ${{ steps.build.outputs.issued_at }}"
+            } >> "$GITHUB_STEP_SUMMARY"
+            # Extract Rekor index/UUID when present (bundle shapes differ).
+            python3 - <<'PY' >> "$GITHUB_STEP_SUMMARY" || true
+          import json, pathlib
+          b = json.loads(pathlib.Path("revocations/revocations.json.sigstore.json").read_text())
+          idx = uuid = None
+          if "rekorBundle" in b:
+              p = b["rekorBundle"].get("Payload") or {}
+              idx, uuid = p.get("logIndex"), p.get("uuid") or p.get("logID")
+          vm = b.get("verificationMaterial") or {}
+          for e in vm.get("tlogEntries") or []:
+              idx = e.get("logIndex", idx)
+              uuid = e.get("logIndex") and (e.get("inclusionPromise") or uuid)
+              break
+          print(f"- rekor_log_index: {idx}")
+          print(f"- rekor_ref: {uuid}")
+          PY
+            # Append selfverify log (allowed Revoke path) or upload artifact if unsafe.
+            mkdir -p revocations
+            TS=$(date -u +%Y-%m-%dT%H:%M:%SZ)
+            echo "$TS workflow_sha=${{ github.sha }} list_version=${{ steps.build.outputs.list_version }} reason=$FAIL_REASON" >> "$SELFVERIFY_LOG"
+            echo "failed=true" >> "$GITHUB_OUTPUT"
+            echo "reason=$FAIL_REASON" >> "$GITHUB_OUTPUT"
+            exit 1
+          }
+
+          # 1) cosign verify-blob against pinned Revoke identity
+          cosign verify-blob \
+            --bundle "$BUNDLE_PATH" \
+            --certificate-identity "$REVOKE_IDENTITY" \
+            --certificate-oidc-issuer "$OIDC_ISSUER" \
+            "$LIST_PATH" || log_fail "cosign verify-blob against Revoke identity"
+
+          # 2) Schema validation (W5 — required)
+          python3 scripts/validate_revocation_list.py --require-base "$LIST_PATH" \
+            || log_fail "schema validation"
+
+          # 3–4) list_version monotonicity + base + append-only (§A.2.1)
+          # Re-check against the HEAD we read (published file was overwritten — restore from git for published)
+          git show HEAD:"$LIST_PATH" > /tmp/ldtt-revoke/published-at-read.json
+          python3 scripts/ldtt_revoke_prepare.py check \
+            --base "$BASE_PATH" \
+            --published /tmp/ldtt-revoke/published-at-read.json \
+            --candidate "$LIST_PATH" || log_fail "A.2.1 base/append-only/monotonicity"
+
+          # 5) §A.3.6 time check vs Rekor integrated time
+          python3 scripts/ldtt_revoke_prepare.py check-time \
+            --list "$LIST_PATH" \
+            --bundle "$BUNDLE_PATH" || log_fail "A.3.6 issued_at vs Rekor time"
+
+          echo "failed=false" >> "$GITHUB_OUTPUT"
+          echo "N28 self-verify OK"
+
+      - name: Upload selfverify artifact on failure
+        if: failure() && steps.selfverify.outputs.failed == 'true'
+        # W2: pin full SHA — actions/upload-artifact@v4.6.2
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: selfverify-failures-${{ github.run_id }}
+          path: |
+            ${{ env.SELFVERIFY_LOG }}
+            ${{ env.BUNDLE_PATH }}
+            ${{ env.LIST_PATH }}
+
+      - name: Path-scope guard + commit (fast-forward only) [FOLD2]
+        if: success() && steps.selfverify.outputs.failed != 'true'
+        run: |
+          set -euo pipefail
+          # Only allowed Revoke paths.
+          git add -- "$LIST_PATH" "$BUNDLE_PATH"
+          if [ -f "$SELFVERIFY_LOG" ]; then
+            git add -- "$SELFVERIFY_LOG"
+          fi
+
+          # Fail if anything else is staged or dirty outside allowed paths.
+          mapfile -t STAGED < <(git diff --cached --name-only)
+          for f in "${STAGED[@]}"; do
+            case "$f" in
+              revocations/revocations.json|revocations/revocations.json.sigstore.json|revocations/selfverify-failures.log) ;;
+              *)
+                echo "::error::path-scope violation: $f (Revoke may only write list+bundle+selfverify log)"
+                exit 1
+                ;;
+            esac
+          done
+          # Unstaged changes to protected paths also fail.
+          if git status --porcelain | grep -vE '^[MARC]  revocations/(revocations\.json(\.sigstore\.json)?|selfverify-failures\.log)$' | grep -q .; then
+            echo "::error::unexpected working tree changes"
+            git status --porcelain
+            exit 1
+          fi
+
+          # FOLD2: if main moved since we read, fail — no rebase/retry same list_version.
+          git fetch origin main
+          REMOTE=$(git rev-parse origin/main)
+          EXPECTED="${{ steps.head.outputs.sha }}"
+          if [ "$REMOTE" != "$EXPECTED" ]; then
+            echo "::error::main moved since read ($EXPECTED -> $REMOTE); fail per FOLD2 (no rebase/retry same list_version)"
+            exit 1
+          fi
+
+          LV="${{ steps.build.outputs.list_version }}"
+          WSHA="${{ github.sha }}"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "revoke: list_version=${LV} workflow_sha=${WSHA}"
+
+          # Fast-forward only push.
+          if ! git push origin HEAD:main; then
+            echo "::error::push rejected (non-fast-forward). Fail per FOLD2 — do not rebase or reuse list_version."
+            exit 1
+          fi
+          echo "Published list_version=$LV"
