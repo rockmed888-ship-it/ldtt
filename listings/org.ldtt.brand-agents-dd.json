@@ -1,0 +1,35 @@
+{
+  "ldtt_line": "listing-developers-trust-tool",
+  "ldtt_spec": "mcp-0.1-draft",
+  "status": "draft",
+  "real_stamp": false,
+  "connector_id": "org.ldtt.brand-agents-dd",
+  "name": "Brand Agents DD",
+  "owner": "Dustin Dent",
+  "transport": "mcp",
+  "public_site": "https://brandbyagents.com",
+  "binds": "127.0.0.1:3848",
+  "tools_evidence": "owner-declaration",
+  "tools_declared": [
+    "dd_status",
+    "dd_run",
+    "dd_open",
+    "dd_observe",
+    "dd_continue",
+    "dd_stop"
+  ],
+  "egress_declared": ["paired-android-phone"],
+  "controls": {
+    "model_key_leaves_host": false,
+    "customer_receives_api_key": false,
+    "undeclared_egress": "deny",
+    "human_gates": ["send", "post", "pay", "publish"]
+  },
+  "host_enforcement": "none",
+  "known_limitations": [
+    "Draft owner listing. Not a real stamp. Not signed by ldtt-issue.yml.",
+    "Tool names are the recorded DD set, not a live tools/list hash from this session.",
+    "Hands drive the paired phone. A mouse or key press on this PC stops them. This does not certify Cody, the brand, or the phone.",
+    "The pairing bearer is not in this file. A managed API may exist beside this connector; this listing covers the hands MCP only."
+  ]
+}

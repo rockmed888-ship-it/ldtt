@@ -1,4 +1,6 @@
+# Live workflow: .github/workflows/ldtt-ref-mav-observer-ci.yml
 # LDTT Phase 2 draft — ref Observe connector CI (free GitHub Actions, $0).
+# Live workflow: .github/workflows/ldtt-ref-mav-observer-ci.yml (this copy is not what GitHub runs).
 # Lives at repo root (GitHub only runs root .github/workflows). Connector path below.
 # Jobs: tests + schema + N3 evidence gate; reproducible wheel + digest check vs ldtt.yaml;
 # keyless cosign sign + GitHub SLSA build provenance (E3 / C3) on main; real ArduCopter SITL smoke (E8).

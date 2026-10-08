@@ -1,0 +1,21 @@
+{
+  "ldtt_spec": "0.2.0",
+  "trust_root_version": 1,
+  "issued_at": "1970-01-01T00:00:00Z",
+  "identities": {
+    "issuer": {
+      "oidc_issuer": "https://token.actions.githubusercontent.com",
+      "identity": "https://github.com/rockmed888-ship-it/ldtt/.github/workflows/ldtt-issue.yml@refs/heads/main"
+    },
+    "revoke": {
+      "oidc_issuer": "https://token.actions.githubusercontent.com",
+      "identity": "https://github.com/rockmed888-ship-it/ldtt/.github/workflows/ldtt-revoke.yml@refs/heads/main"
+    }
+  },
+  "artifact_signers": {
+    "org.ldtt.ref-mav-observer": {
+      "oidc_issuer": "https://token.actions.githubusercontent.com",
+      "identity": "https://github.com/rockmed888-ship-it/ldtt/.github/workflows/ldtt-ref-mav-observer-ci.yml@refs/heads/main"
+    }
+  }
+}

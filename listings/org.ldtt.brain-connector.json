@@ -1,0 +1,40 @@
+{
+  "ldtt_line": "listing-developers-trust-tool",
+  "ldtt_spec": "mcp-0.1-draft",
+  "status": "draft",
+  "real_stamp": false,
+  "connector_id": "org.ldtt.brain-connector",
+  "name": "Brain Connector",
+  "owner": "Dustin Dent",
+  "transport": "mcp",
+  "public_site": "https://rockmed888-ship-it.github.io/brain-connector-site/",
+  "source_visibility": "private shop repo stays private",
+  "tools_evidence": "owner-declaration",
+  "tools_declared": [
+    "brain_ask",
+    "brain_page",
+    "brain_guide",
+    "brain_act",
+    "brain_remember",
+    "brain_note",
+    "brain_recall",
+    "brain_topic",
+    "brain_trail",
+    "brain_reset",
+    "dent_scan",
+    "dent_discuss",
+    "dent_deal"
+  ],
+  "controls": {
+    "model_key_leaves_host": false,
+    "customer_receives_api_key": false,
+    "undeclared_egress": "deny",
+    "human_gates": ["send", "post", "pay"]
+  },
+  "host_enforcement": "none",
+  "known_limitations": [
+    "Draft owner listing. Not a real stamp. Not signed by ldtt-issue.yml.",
+    "Tool names are an owner declaration from 2026-10-04, not a live tools/list hash.",
+    "No release digest is bound yet."
+  ]
+}

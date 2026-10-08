@@ -1,0 +1,25 @@
+{
+  "ldtt_line": "listing-developers-trust-tool",
+  "ldtt_spec": "mcp-0.1-draft",
+  "status": "draft",
+  "real_stamp": false,
+  "connector_id": "org.ldtt.brand-agents",
+  "name": "Brand Agents",
+  "owner": "Dustin Dent",
+  "transport": "host-proof",
+  "site": "https://brandbyagents.com",
+  "uses_connector": "org.ldtt.brand-agents-dd",
+  "tools_evidence": "not-an-mcp-server",
+  "controls": {
+    "model_key_leaves_host": false,
+    "customer_receives_api_key": false,
+    "undeclared_egress": "deny",
+    "human_gates": ["send", "post", "pay", "publish"]
+  },
+  "host_enforcement": "none",
+  "known_limitations": [
+    "Draft owner listing. Not a real stamp. Not signed by ldtt-issue.yml.",
+    "Host proof for the public Brand Agents site. Cody is the public face. Not an MCP server.",
+    "Does not certify the business, the phone, or any flight or payment action."
+  ]
+}
