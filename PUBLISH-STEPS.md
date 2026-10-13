@@ -21,7 +21,9 @@ Connector currently uses Spec v0.1.4 **relative** path per Corrector N2.
 
 ## Recurring: revocation list re-sign
 
-`max_staleness_s` = 86400. Re-sign at least every 24 h (next due before **2026-10-14 14:18 CT** = 2026-10-14T19:18:42Z; next `list_version` 13):
+> **RETIRING (Lead, 2026-10-13):** manual placeholder-key re-signs stop. No READY-v13 placeholder will be prepared. Next step is `ldtt-issue` mode=revocation-list seeding `revocations/base/*` at `list_version` **13** (keyless, Issuer identity). After the seed, one manual `ldtt-revoke` dispatch (expect v14 with `base` → v13), then the `ldtt-revoke` cron (every 6 h) owns freshness. Steps below are historical; use them only if Lead explicitly re-authorizes a placeholder re-sign.
+
+`max_staleness_s` = 86400. Re-sign at least every 24 h (v12 stale after **2026-10-14 14:18 CT** = 2026-10-14T19:18:42Z; v13 comes from the Issuer seed, not a placeholder re-sign):
 1. Set `issued_at` to now (UTC), bump `list_version` by 1 (never decrease; next = 13). Keep `ldtt_spec` **0.1.4** (N4 done).
 
 Log: v3 2026-10-06T10:41:27Z (N4, `d65b4ed`) → v4 2026-10-06T12:12:10Z (07:12 CT) → v5 2026-10-06T14:14:41Z (09:14 CT) → v6 2026-10-06T17:18:41Z (12:18 CT) → v7 2026-10-07T13:46:51Z (08:46 CT) → v8 2026-10-07T14:18:41Z (09:18 CT; Rekor 3132708103, `82ab6d2`) → v9 2026-10-12T13:24:09Z (08:24 CT; Rekor 3228588422, `e142145`) → v10 2026-10-12T19:12:53Z (14:12 CT; Rekor 3233733898, `3227323`) → v11 2026-10-13T13:17:10Z (08:17 CT; Rekor 3244756925, `1cf5964`) → **v12 2026-10-13T19:18:42Z** (14:18 CT; Lead OK re-sign; Rekor 3245940076, revoked `[]`; stamp `0.1.0` not re-signed — no stamp field depends on the list).

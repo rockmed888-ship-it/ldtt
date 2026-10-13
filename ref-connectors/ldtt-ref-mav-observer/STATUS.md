@@ -70,7 +70,7 @@ Re-run 2026-10-06 ~04:13 CT **without** dev-only flags (N3): real ArduCopter SIT
 | **P6** | Trust root: placeholder key → LDTT issuer key (creator, §9.1) or keyless issuer identity; update connector verify config | **PLAN REF** — required before any **real** stamp. Placeholder local-key kept; honest C3 known_limitation. |
 | P7 | Canonical repo locked: rockmed888-ship-it/ldtt | Done (under freeze). |
 | **N4** | Revoke re-sign 2026-10-06 ~05:41 CT: `list_version` 2→**3**, `ldtt_spec` → **0.1.4** on stamp `0.1.0.json` **and** `revocations.json`, `issued_at` 2026-10-06T10:41:27Z; both re-signed with placeholder key, verified CLI + in-process; connector `placeholders/` mirrored. | **DONE** |
-| Ops | Re-sign `revocations/revocations.json` (bump `list_version`, never decrease) | **Done 2026-10-13 14:18 CT (Lead OK):** `list_version` 11→**12**, `issued_at` 2026-10-13T19:18:42Z, revoked `[]`, placeholder key, Rekor 3245940076, CLI verified, `placeholders/` mirrored byte-identical. Next due before **2026-10-14 14:18 CT** (2026-10-14T19:18:42Z = issued_at + 86400 s); next `list_version` 13. |
+| Ops | Re-sign `revocations/revocations.json` (bump `list_version`, never decrease) | **Done 2026-10-13 14:18 CT (Lead OK):** `list_version` 11→**12**, `issued_at` 2026-10-13T19:18:42Z, revoked `[]`, placeholder key, Rekor 3245940076, CLI verified, `placeholders/` mirrored byte-identical. Stale after **2026-10-14 14:18 CT** (2026-10-14T19:18:42Z). **Manual placeholder re-signs RETIRED (Lead 2026-10-13):** v13 = `ldtt-issue` mode=revocation-list seed (writes `revocations/base/*`); then `ldtt-revoke` (manual once, then cron) owns freshness. |
 
 ## Confirmations
 
@@ -80,7 +80,8 @@ Re-run 2026-10-06 ~04:13 CT **without** dev-only flags (N3): real ArduCopter SIT
 - N4: **done** (list_version 3, ldtt_spec 0.1.4 on stamp + revocations; placeholder key)
 - Ops re-sign 2026-10-12 14:12 CT: revocations `list_version` **10** (issued 2026-10-12T19:12:53Z; stamp untouched).
 - Ops re-sign 2026-10-13 08:17 CT: revocations `list_version` **11** (issued 2026-10-13T13:17:10Z; stamp untouched).
-- Ops re-sign 2026-10-13 14:18 CT: revocations `list_version` **12** (issued 2026-10-13T19:18:42Z; stamp untouched). Next due before **2026-10-14 14:18 CT**.
+- Ops re-sign 2026-10-13 14:18 CT: revocations `list_version` **12** (issued 2026-10-13T19:18:42Z; stamp untouched). Last placeholder re-sign.
+- 2026-10-13: first keyless stamp `25a67be` (ldtt-issue run 38412130870, Rekor 3246036137); body still has the draft C3 note — re-issue with corrected C3 queued after base seed. Connector `cosign_verify` default-identity fix (pin trust-root ldtt-issue / ldtt-revoke @refs/heads/main instead of any GitHub workflow) is staged box-side, NOT on main: any src change alters the wheel digest stamped in 0.1.0 (would need a 0.1.1 wheel + stamp).
 - Spend: **$0**
 - Hardware: **none**
 - Brand: **Linked Drone Tool Trust**
