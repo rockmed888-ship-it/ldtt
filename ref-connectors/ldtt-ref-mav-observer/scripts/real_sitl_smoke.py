@@ -121,13 +121,32 @@ def launch(backend: str) -> tuple[subprocess.Popen | None, dict]:
     return proc, info
 
 
+MAIN_LIST_URL = "https://raw.githubusercontent.com/rockmed888-ship-it/ldtt/main/revocations/revocations.json"
+REVOKE_IDENTITY = "https://github.com/rockmed888-ship-it/ldtt/.github/workflows/ldtt-revoke.yml@refs/heads/main"
+OIDC_ISSUER = "https://token.actions.githubusercontent.com"
+
+
+def _fetch_main_revocation_list() -> Path:
+    """Download the live Revoke list + Sigstore bundle from main into a temp dir."""
+    import tempfile
+    d = Path(tempfile.mkdtemp(prefix="ldtt-main-list-"))
+    for suffix in ("", ".sigstore.json"):
+        with urllib.request.urlopen(MAIN_LIST_URL + suffix, timeout=30) as r:
+            (d / ("revocations.json" + suffix)).write_bytes(r.read())
+    return d / "revocations.json"
+
+
 def phase_a(audit_path: Path, cap_path: Path, max_messages: int) -> dict:
     env = os.environ.copy()
     env["PYTHONPATH"] = str(ROOT / "src") + os.pathsep + env.get("PYTHONPATH", "")
+    # Live keyless Revoke list from main (placeholder-key list retired 2026-10-20).
+    # The connector verifies the Sigstore bundle in-process against LDTT_COSIGN_IDENTITY.
+    env.setdefault("LDTT_COSIGN_IDENTITY", REVOKE_IDENTITY)
+    env.setdefault("LDTT_COSIGN_ISSUER", OIDC_ISSUER)
+    rev_list = _fetch_main_revocation_list()
     cmd = [sys.executable, "-m", "ldtt_ref_mav_observer", "--manifest", str(ROOT / "ldtt.yaml"),
            "--connection", CONN,
-           "--revocation-list", str(ROOT / "placeholders/revocations/revocations.json"),
-           "--cosign-key", str(ROOT / "placeholders/keys/ldtt-placeholder.pub"),
+           "--revocation-list", str(rev_list),
            "--audit-path", str(audit_path), "--max-messages", str(max_messages),
            "--wait-heartbeat-s", "30", "--heartbeat-hz", "1",
            "--wire-capture", str(cap_path)]

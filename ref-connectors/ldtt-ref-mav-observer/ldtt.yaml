@@ -73,14 +73,14 @@ audit_log:
   includes: ["session", "scope_grant", "egress_opt_in", "revocation_check"]
 
 revocation:
-  # Spec v0.1.4: relative path OK (offline / DoD). Public HTTPS copy (live) on rockmed888-ship-it/ldtt:
-  # https://raw.githubusercontent.com/rockmed888-ship-it/ldtt/main/revocations/revocations.json
-  list_url: "placeholders/revocations/revocations.json"
+  # Live Revoke list on main (keyless, ldtt-revoke.yml@refs/heads/main; base -> ldtt-issue seed).
+  # Placeholder-key list under placeholders/ is retired (stale since 2026-10-14; kept for unit tests only).
+  list_url: "https://raw.githubusercontent.com/rockmed888-ship-it/ldtt/main/revocations/revocations.json"
   check_interval_s: 3600
   max_staleness_s: 86400
 
 known_limitations:
   - control: "C3"
-    note: "Draft: wheel digest is real and reproducible; signature + SLSA provenance are placeholder-key / local builder (not issuer key, not keyless, not CI-built). CI keyless + GitHub attestation workflow drafted but not active; no hosted release asset."
+    note: "wheel reproducible and CI-rebuilt on main with matching digest; GitHub SLSA v1 provenance by ldtt-ref-mav-observer-ci.yml@refs/heads/main; stamp keyless-signed by ldtt-issue; no hosted release asset."
   - control: "C9"
     note: "Observe: mavlink signing false (allowed at Observe)."

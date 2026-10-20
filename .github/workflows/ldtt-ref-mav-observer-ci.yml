@@ -45,18 +45,23 @@ jobs:
         run: python scripts/validate_ldtt_yaml.py
       - name: N3 — evidence must not rely on dev-only flags
         run: python scripts/check_evidence_no_dev_flags.py
-      - name: Local-key verify published placeholder list + stamp (draft only)
+      # Placeholder-key list check retired 2026-10-20 (Lead): verify the live keyless Revoke list on main.
+      - uses: sigstore/cosign-installer@6f9f17788090df1f26f669e9d70d6ae9567deba6
+      - name: Keyless verify main Revoke list + validate --require-base
+        env:
+          LIST_URL: https://raw.githubusercontent.com/rockmed888-ship-it/ldtt/main/revocations/revocations.json
+          REVOKE_IDENTITY: https://github.com/rockmed888-ship-it/ldtt/.github/workflows/ldtt-revoke.yml@refs/heads/main
         run: |
-          python - <<'PY'
-          from pathlib import Path
-          from ldtt_ref_mav_observer.cosign_verify import verify_blob
-          key = Path("placeholders/keys/ldtt-placeholder.pub")
-          for blob in ["placeholders/revocations/revocations.json",
-                       "placeholders/stamps/org.ldtt.ref-mav-observer/0.1.0.json"]:
-              result = verify_blob(Path(blob), bundle_path=Path(blob + ".sigstore.json"), key_path=key)
-              print(blob, result.mode, result.ok)
-              assert result.ok, result.detail
-          PY
+          set -euo pipefail
+          tmp=$(mktemp -d)
+          curl -fsSL -o "$tmp/revocations.json" "$LIST_URL"
+          curl -fsSL -o "$tmp/revocations.json.sigstore.json" "$LIST_URL.sigstore.json"
+          cosign verify-blob \
+            --bundle "$tmp/revocations.json.sigstore.json" \
+            --certificate-identity "$REVOKE_IDENTITY" \
+            --certificate-oidc-issuer "$OIDC_ISSUER" \
+            "$tmp/revocations.json"
+          python "$GITHUB_WORKSPACE/scripts/validate_revocation_list.py" --require-base "$tmp/revocations.json"
 
   release-build:
     needs: test
