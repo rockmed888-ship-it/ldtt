@@ -4,7 +4,7 @@ Connector trust stamp. Two lines, one issuer.
 
 | Line | Name | Status |
 |---|---|---|
-| Drone | Linked Drone Tool Trust | Frozen spec v0.2. Reference stamp `0.1.0` is still a **draft** placeholder, not a real stamp. |
+| Drone | Linked Drone Tool Trust | Frozen spec v0.2. Reference stamp `0.1.0` is a real Observe stamp, keyless-signed via Sigstore (Rekor log entry), and is not revoked on the signed public revoke list. |
 | MCP | [Listing Developers Trust Tool](./LDTT-Listing-Developers-Trust-Tool-v0.1-draft.md) | Draft v0.1. Owner listings only. Not signed. |
 
 - Drone spec (current connector spec): [`LDTT-Stamp-Spec-v0.1.4.md`](./LDTT-Stamp-Spec-v0.1.4.md)
