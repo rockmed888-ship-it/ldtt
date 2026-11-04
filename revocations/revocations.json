@@ -1,8 +1,8 @@
 {
   "ldtt_spec": "0.1.4",
   "issuer": "LDTT",
-  "list_version": 90,
-  "issued_at": "2026-11-04T13:43:36Z",
+  "list_version": 91,
+  "issued_at": "2026-11-04T23:10:05Z",
   "revoked": [],
   "base": {
     "list_version": 13,
